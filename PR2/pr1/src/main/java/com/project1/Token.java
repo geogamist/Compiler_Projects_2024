@@ -5,7 +5,8 @@ public class Token {
     public enum TokenType {
     IDENT_TOKEN,
     ASSIGN_TOKEN,
-    IF_TOKEN,
+    IF_TOKEN, 
+    EOF_TOKEN,
     // rest of tokens ....
     }
     private TokenType tokenType;
