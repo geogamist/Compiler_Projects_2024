@@ -176,10 +176,19 @@ public class CminusScanner implements Scanner {
     			break;
     		case INCOMMENT:
     			save = false;
-    			if (c == '*') {
-    				state = StateType.INCOMMENTEXIT;
-    			}
-    			break;
+				switch (c) {
+				case '*':
+					state = StateType.INCOMMENTEXIT;
+					break;
+				// EOF indicator
+				case (char) -1:
+					state = StateType.DONE;
+					currentToken.setTokenType(TokenType.ERROR);
+					break;
+    			default:
+    				break;
+				}
+				break;
     		case INCOMMENTEXIT:
 				switch (c) {
 					case '/':
@@ -187,6 +196,7 @@ public class CminusScanner implements Scanner {
 						break;
 					// EOF indicator
     				case (char) -1:
+						state = StateType.DONE;
     					currentToken.setTokenType(TokenType.ERROR);
     					break;
 					default:
@@ -239,6 +249,18 @@ public class CminusScanner implements Scanner {
     			}
     			break;
     		case INNUM:
+				/* 
+				 * TODO: Currently, this will back up the input and produce a valud digit on
+				 * something like this:
+				 * 		int 1num;
+				 * producing
+				 * 		INT
+				 * 		NUM 1
+				 * 		ID num
+				 * 		SEMI
+				 * Do we want to throw an error on all of input like "1num"?
+				 * Note: IDs don't care about this issue
+				 */
     			if (!Character.isDigit(c)) {
     				inFile.unread(c);
     				save = false;
