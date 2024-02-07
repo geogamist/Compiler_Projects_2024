@@ -3,11 +3,12 @@ package com.project1;
 
 public class Token {
     public enum TokenType {
-    IDENT_TOKEN,
-    ASSIGN_TOKEN,
-    IF_TOKEN, 
-    EOF_TOKEN,
-    // rest of tokens ....
+    	ENDFILE, ERROR,
+    	IF, THEN, ELSE, END, REPEAT, UNTIL, READ, WRITE,
+    	INT, RETURN, VOID, WHILE,
+    	ID, NUM,
+    	ASSIGN, EQ, LT, PLUS, MINUS, TIMES, OVER, LPAREN,
+    	RPAREN, LBRACKET, RBRACKET, SEMI
     }
     private TokenType tokenType;
     private Object tokenData;
@@ -17,8 +18,8 @@ public class Token {
     }
     
     public Token (TokenType type, Object data) {
-    tokenType = type;
-    tokenData = data;
+	    tokenType = type;
+	    tokenData = data;
     }
 
     // some access methods
