@@ -15,8 +15,13 @@ public class CminusScanner implements Scanner{
     Map<String, TokenType> keywords;
     private enum StateType {
     	START,
-    	INASSIGN,
+    	INEQ,
+    	INLT,
+    	INGT,
+    	INNOT,
+    	INDIV,
     	INCOMMENT,
+    	INCOMMENTEXIT,
     	INNUM,
     	INID,
     	DONE
@@ -39,8 +44,9 @@ public class CminusScanner implements Scanner{
     
     public Token getNextToken () {
         Token returnToken = nextToken;
-        if (nextToken.getTokenType() != Token.TokenType.EOF_TOKEN)
+        if (nextToken.getTokenType() != TokenType.ENDFILE) {
             nextToken = scanToken();
+        }
         return returnToken;
     }
     
@@ -67,16 +73,24 @@ public class CminusScanner implements Scanner{
     			else if (Character.isLetter(c)) {
     				state = StateType.INID;
     			}
-    			else if (c == ':') {
-    				state = StateType.INASSIGN;
+    			else if (c == '=') {
+    				state = StateType.INEQ;
+    			}
+    			else if (c == '<') {
+    				state = StateType.INLT;
+    			}
+    			else if (c == '>') {
+    				state = StateType.INGT;
+    			}
+    			else if (c == '!') {
+    				state = StateType.INNOT;
     			}
     			else if ((c == ' ') || (c == '\t') || (c == '\n')) {
     				save = false;
     			}
     			// In a comment
-    			else if (tokenString.substring(tokenString.length() - 1).equals("/") && c == '*') {
-    				save = false;
-    				state = StateType.INCOMMENT;
+    			else if (c == '/') {
+    				state = StateType.INDIV;
     			}
     			else {
     				state = StateType.DONE;
@@ -101,9 +115,6 @@ public class CminusScanner implements Scanner{
     				case '*':
     					currentToken.setTokenType(TokenType.TIMES);
     					break;
-    				case '/':
-    					currentToken.setTokenType(TokenType.OVER);
-    					break;
     				case '(':
     					currentToken.setTokenType(TokenType.LPAREN);
     					break;
@@ -111,29 +122,89 @@ public class CminusScanner implements Scanner{
     					currentToken.setTokenType(TokenType.RPAREN);
     					break;
     				case '{':
-    					currentToken.setTokenType(TokenType.LBRACKET);
+    					currentToken.setTokenType(TokenType.LBRACE);
     					break;
     				case '}':
+    					currentToken.setTokenType(TokenType.RBRACE);
+    					break;
+    				case '[':
+    					currentToken.setTokenType(TokenType.LBRACKET);
+    					break;
+    				case ']':
     					currentToken.setTokenType(TokenType.RBRACKET);
     					break;
     				case ';':
     					currentToken.setTokenType(TokenType.SEMI);
+    					break;
+    				case ',':
+    					currentToken.setTokenType(TokenType.COMMA);
     					break;
     				default:
     					currentToken.setTokenType(TokenType.ERROR);
     					break;
     			}}
     			break;
-    		case INCOMMENT:
-    			save = false;
-    			if (tokenString.substring(tokenString.length() - 1).equals("*") && c == '/') {
-    				state = StateType.START;
+    		case INDIV:
+    			if (c == '*') {
+    				state = StateType.INCOMMENT;
+    			}
+    			else {
+    				state = StateType.DONE;
+    				inFile.unread(c);
+					currentToken.setTokenType(TokenType.OVER);
     			}
     			break;
-    		case INASSIGN:
+    		case INCOMMENT:
+    			save = false;
+    			if (c == '*') {
+    				state = StateType.INCOMMENTEXIT;
+    			}
+    			break;
+    		case INCOMMENTEXIT:
+    			if (c == '/') {
+    				state = StateType.START;
+    			}
+    			else {
+    				state = StateType.INCOMMENT;
+    			}
+    			break;
+    		case INEQ:
     			state = StateType.DONE;
     			if (c == '=') {
     				currentToken.setTokenType(TokenType.EQ);
+    			}
+    			else {
+    				inFile.unread(c);
+    				save = false;
+    				currentToken.setTokenType(TokenType.ASSIGN);
+    			}
+    			break;
+    		case INLT:
+    			state = StateType.DONE;
+    			if (c == '=') {
+    				currentToken.setTokenType(TokenType.LE);
+    			}
+    			else {
+    				inFile.unread(c);
+    				save = false;
+    				currentToken.setTokenType(TokenType.LT);
+    			}
+    			break;
+    		case INGT:
+    			state = StateType.DONE;
+    			if (c == '=') {
+    				currentToken.setTokenType(TokenType.GE);
+    			}
+    			else {
+    				inFile.unread(c);
+    				save = false;
+    				currentToken.setTokenType(TokenType.GT);
+    			}
+    			break;
+    		case INNOT:
+    			state = StateType.DONE;
+    			if (c == '=') {
+    				currentToken.setTokenType(TokenType.NE);
     			}
     			else {
     				inFile.unread(c);

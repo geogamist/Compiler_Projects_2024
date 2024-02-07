@@ -3,12 +3,16 @@ package com.project1;
 
 public class Token {
     public enum TokenType {
+    	/* book-keeping tokens */
     	ENDFILE, ERROR,
+    	/* reserved words */
     	IF, THEN, ELSE, END, REPEAT, UNTIL, READ, WRITE,
     	INT, RETURN, VOID, WHILE,
+    	/* multicharacter tokens */
     	ID, NUM,
-    	ASSIGN, EQ, LT, PLUS, MINUS, TIMES, OVER, LPAREN,
-    	RPAREN, LBRACKET, RBRACKET, SEMI
+    	/* special symbols */
+    	ASSIGN, EQ, LT, GT, LE, GE, NE, PLUS, MINUS, TIMES, OVER, LPAREN,
+    	RPAREN, LBRACKET, RBRACKET, LBRACE, RBRACE, SEMI, COMMA
     }
     private TokenType tokenType;
     private Object tokenData;
