@@ -4,7 +4,7 @@ package com.project1;
 public class Token {
     public enum TokenType {
     	/* book-keeping tokens */
-    	ENDFILE, ERROR,
+    	ENDFILE, NULL, ERROR,
     	/* reserved words */
     	IF, THEN, ELSE, END, REPEAT, UNTIL, READ, WRITE,
     	INT, RETURN, VOID, WHILE,
@@ -16,7 +16,11 @@ public class Token {
     }
     private TokenType tokenType;
     private Object tokenData;
-    // rest of class ....
+    
+    public Token () {
+        this (TokenType.NULL, null);
+    }
+
     public Token (TokenType type) {
         this (type, null);
     }

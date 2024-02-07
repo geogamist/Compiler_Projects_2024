@@ -1,13 +1,14 @@
 package com.project1;
 
 import java.io.PushbackReader;
+import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.*;
 
 import com.project1.Token.TokenType;
 
-public class CminusScanner implements Scanner{
+public class CminusScanner implements Scanner {
 
     private PushbackReader inFile;
     private Token nextToken;
@@ -26,9 +27,16 @@ public class CminusScanner implements Scanner{
     	INID,
     	DONE
     }
-    
 
-    public void CMinusScanner (String filename) throws IOException {
+    public CminusScanner(String filename) {
+		try {
+			CMinusScanner(filename);
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		}
+	}
+
+	public void CMinusScanner (String filename) throws FileNotFoundException {
         inFile = new PushbackReader(new FileReader(filename));
         keywords = new HashMap<String, TokenType>() {{
         	put("else", TokenType.ELSE);
@@ -39,13 +47,21 @@ public class CminusScanner implements Scanner{
         	put("while", TokenType.WHILE);
         }};
         tokenString = "";
-        nextToken = scanToken();
+        try {
+			nextToken = scanToken();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
     }
     
     public Token getNextToken () {
         Token returnToken = nextToken;
         if (nextToken.getTokenType() != TokenType.ENDFILE) {
-            nextToken = scanToken();
+            try {
+				nextToken = scanToken();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
         }
         return returnToken;
     }
@@ -57,7 +73,8 @@ public class CminusScanner implements Scanner{
     //scanToken method - TODO
     private Token scanToken () throws IOException {
         
-    	Token currentToken = null;
+    	Token currentToken = new Token();
+		tokenString = "";
     	StateType state = StateType.START;
     	boolean save;
     	
@@ -95,7 +112,7 @@ public class CminusScanner implements Scanner{
     			else {
     				state = StateType.DONE;
     				switch (c) {
-    				// EOF INDICATOR
+    				// EOF indicator
     				case (char) -1:
     					save = false;
     					currentToken.setTokenType(TokenType.ENDFILE);
@@ -139,6 +156,9 @@ public class CminusScanner implements Scanner{
     				case ',':
     					currentToken.setTokenType(TokenType.COMMA);
     					break;
+					// End of line indicator
+					case '\r':
+						break;
     				default:
     					currentToken.setTokenType(TokenType.ERROR);
     					break;
@@ -161,12 +181,18 @@ public class CminusScanner implements Scanner{
     			}
     			break;
     		case INCOMMENTEXIT:
-    			if (c == '/') {
-    				state = StateType.START;
-    			}
-    			else {
-    				state = StateType.INCOMMENT;
-    			}
+				switch (c) {
+					case '/':
+						state = StateType.START;
+						break;
+					// EOF indicator
+    				case (char) -1:
+    					currentToken.setTokenType(TokenType.ERROR);
+    					break;
+					default:
+						state = StateType.INCOMMENT;
+						break;
+				}
     			break;
     		case INEQ:
     			state = StateType.DONE;
@@ -222,7 +248,7 @@ public class CminusScanner implements Scanner{
     			}
     			break;
     		case INID:
-    			if (!Character.isLetter(c)) {
+    			if (!Character.isLetterOrDigit(c)) {
     				inFile.unread(c);
     				save = false;
     				state = StateType.DONE;
@@ -242,10 +268,10 @@ public class CminusScanner implements Scanner{
         		tokenString += c;
         	}
     		if (state.equals(StateType.DONE)) {
-    			tokenString += '\0';
     			if (currentToken.getTokenType() == TokenType.ID) {
     				currentToken.setTokenType(reservedLookup(tokenString));
     			}
+				tokenString += '\0';
     		}
     	}
     	
