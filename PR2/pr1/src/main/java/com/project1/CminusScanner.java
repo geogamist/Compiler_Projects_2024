@@ -286,18 +286,6 @@ public class CminusScanner implements Scanner {
     			}
     			break;
     		case INNUM:
-				/* 
-				 * TODO: Currently, this will back up the input and produce a valud digit on
-				 * something like this:
-				 * 		int 1num;
-				 * producing
-				 * 		INT
-				 * 		NUM 1
-				 * 		ID num
-				 * 		SEMI
-				 * Do we want to throw an error on all of input like "1num"?
-				 * Note: IDs don't care about this issue
-				 */
     			if (!Character.isDigit(c)) {
 					if(Character.isLetter(c)) {
 						state = StateType.INNUMRROR;
