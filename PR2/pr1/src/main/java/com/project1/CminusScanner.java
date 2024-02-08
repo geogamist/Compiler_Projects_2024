@@ -228,6 +228,8 @@ public class CminusScanner implements Scanner {
 						save = false;
 						state = StateType.START;
 						break;
+					case '*':
+						break;
 					// EOF indicator
     				case (char) -1:
 						state = StateType.DONE;
