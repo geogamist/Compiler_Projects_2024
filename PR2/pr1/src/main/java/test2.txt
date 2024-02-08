@@ -7,7 +7,8 @@ int divide(int num1,int num2){
 
 /**
  * Runs the main program
- */
+ */ 
+ 
 int main(){
     
     /*Holds the number*/

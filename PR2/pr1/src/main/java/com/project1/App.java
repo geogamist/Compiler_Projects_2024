@@ -1,6 +1,7 @@
 package com.project1;
 import com.project1.Token.TokenType;
-
+import java.io.FileWriter;
+import java.io.IOException;
 /** 
 * This class implements App, providing testing support for the CminusScanner
 *
@@ -18,31 +19,43 @@ import com.project1.Token.TokenType;
 public class App {
     public static void main( String[] args ) {
         //go up one directory level to find the test file
-        String fileNamePath = System.getProperty("user.dir") + "\\pr1\\src\\main\\java\\";
+        String WorkingDir = System.getProperty("user.dir") + "\\PR2\\pr1\\src\\main\\java\\";
         //Ask user for whitch test file to use
         System.out.println("Enter the name of the file you would like to test DIGIT INPUT:");
         java.util.Scanner input = new java.util.Scanner(System.in);
         String filenumber = input.nextLine();
-        fileNamePath += "test" + filenumber + ".txt";
+        input.close();
+        String fileNamePath = WorkingDir +  "test" + filenumber + ".txt";
 
         System.out.println(fileNamePath);
         //String filename = "../test4.txt";
         
         Scanner scanner = new CminusScanner(fileNamePath);
 
-        // Cycle through the program, collecting and printing all valid tokens
-        while (scanner.viewNextToken().getTokenType() != TokenType.ENDFILE) {
-            String line = new String();
-            Token currToken = scanner.getNextToken();
-            TokenType type = currToken.getTokenType();
-            line = String.valueOf(type);
+        try {
+            FileWriter myWriter = new FileWriter(WorkingDir + "output.txt");
 
-            if (type == TokenType.ID || type == TokenType.NUM) {
-                line += (" " + String.valueOf(currToken.getTokenData()));
+            // Cycle through the program, collecting and printing all valid tokens
+            while (scanner.viewNextToken().getTokenType() != TokenType.ENDFILE) {
+                String line = new String();
+                Token currToken = scanner.getNextToken();
+                TokenType type = currToken.getTokenType();
+                line = String.valueOf(type);
+
+                if (type == TokenType.ID || type == TokenType.NUM) {
+                    line += (" " + String.valueOf(currToken.getTokenData()));
+                }
+                if (type != TokenType.NULL) {
+                    System.out.println(line);
+                    //write to file
+                    myWriter.write(line + "\n");
+                    
+                }
             }
-            if (type != TokenType.NULL) {
-                System.out.println(line);
-            }
+            myWriter.close();
+        }catch (IOException e) {
+            e.printStackTrace();
         }
+
     }
 }

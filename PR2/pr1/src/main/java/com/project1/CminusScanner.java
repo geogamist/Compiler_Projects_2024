@@ -32,7 +32,7 @@ public class CminusScanner implements Scanner {
 	// Keeps track of scanner states
     private enum StateType {
     	START, INEQ, INLT, INGT, INNOT, INDIV, INCOMMENT,
-		INCOMMENTEXIT, INNUM, INID, DONE
+		INCOMMENTEXIT, INNUM, INNUMRROR, INID, DONE
     }
 
 	/**
@@ -118,7 +118,7 @@ public class CminusScanner implements Scanner {
     			if (Character.isDigit(c)) {
     				state = StateType.INNUM;
     			}
-    			else if (Character.isLetter(c)) {
+    			else if (Character.isLetter(c) || c == '_') {
     				state = StateType.INID;
     			}
     			else if (c == '=') {
@@ -234,6 +234,7 @@ public class CminusScanner implements Scanner {
     					currentToken.setTokenType(TokenType.ERROR);
     					break;
 					default:
+						save = false;
 						state = StateType.INCOMMENT;
 						break;
 				}
@@ -296,15 +297,28 @@ public class CminusScanner implements Scanner {
 				 * Note: IDs don't care about this issue
 				 */
     			if (!Character.isDigit(c)) {
-    				inFile.unread(c);
-    				save = false;
-    				state = StateType.DONE;
-    				currentToken.setTokenType(TokenType.NUM);
-    				currentToken.setTokenData(tokenString);
+					if(Character.isLetter(c)) {
+						state = StateType.INNUMRROR;
+					}
+					else {
+						inFile.unread(c);
+						save = false;
+						state = StateType.DONE;
+						currentToken.setTokenType(TokenType.NUM);
+						currentToken.setTokenData(tokenString);
+					}
     			}
     			break;
+			case INNUMRROR:
+				if (!Character.isLetterOrDigit(c)) {
+					inFile.unread(c);
+					save = false;
+					state = StateType.DONE;
+					currentToken.setTokenType(TokenType.ERROR);
+				}
+				break;
     		case INID:
-    			if (!Character.isLetterOrDigit(c)) {
+    			if (!Character.isLetterOrDigit(c) && c != '_') {
     				inFile.unread(c);
     				save = false;
     				state = StateType.DONE;
