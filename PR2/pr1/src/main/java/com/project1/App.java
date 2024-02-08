@@ -17,7 +17,7 @@ import com.project1.Token.TokenType;
 */
 public class App {
     public static void main( String[] args ) {
-        String filename = "PR2\\pr1\\src\\main\\java\\test3.txt";
+        String filename = "PR2\\pr1\\src\\main\\java\\test4.txt";
         Scanner scanner = new CminusScanner(filename);
 
         // Cycle through the program, collecting and printing all valid tokens
