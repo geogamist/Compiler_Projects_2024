@@ -5,39 +5,49 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.*;
-
 import com.project1.Token.TokenType;
 
+/** 
+* This class implements the Scanner ADT, providing support for the Cminus language.
+*
+* @author Abagail Clark, Josiah Harvey, Spencer Riffle
+* @version 1.0
+* File: CminusScanner.java
+* Created: Feb 2024
+* ©Copyright Cedarville University, its Computer Science faculty, and the 
+* authors. All rights reserved.
+* Summary of Modifications:
+*
+* Description: This class provides an implementation of a scanner for the Cminus language.
+* Users of this class provide an input file for be scanned, and are provided methods to 
+* both view and get the next Token.
+*/
 public class CminusScanner implements Scanner {
 
     private PushbackReader inFile;
     private Token nextToken;
     private String tokenString;
-    Map<String, TokenType> keywords;
+    private Map<String, TokenType> keywords;
+
+	// Keeps track of scanner states
     private enum StateType {
-    	START,
-    	INEQ,
-    	INLT,
-    	INGT,
-    	INNOT,
-    	INDIV,
-    	INCOMMENT,
-    	INCOMMENTEXIT,
-    	INNUM,
-    	INID,
-    	DONE
+    	START, INEQ, INLT, INGT, INNOT, INDIV, INCOMMENT,
+		INCOMMENTEXIT, INNUM, INID, DONE
     }
 
+	/**
+	 * Initializes CminusScanner for a specific file
+	 * @param filename The name of the file to scan
+	 */
     public CminusScanner(String filename) {
 		try {
-			CMinusScanner(filename);
-		} catch (FileNotFoundException e) {
+			inFile = new PushbackReader(new FileReader(filename));
+		} 
+		catch (FileNotFoundException e) {
 			e.printStackTrace();
 		}
-	}
-
-	public void CMinusScanner (String filename) throws FileNotFoundException {
-        inFile = new PushbackReader(new FileReader(filename));
+		
+		// Initialize keywords to look for in identifiers
         keywords = new HashMap<String, TokenType>() {{
         	put("else", TokenType.ELSE);
         	put("if", TokenType.IF);
@@ -46,31 +56,46 @@ public class CminusScanner implements Scanner {
         	put("void", TokenType.VOID);
         	put("while", TokenType.WHILE);
         }};
-        tokenString = "";
+
+		// Populate the initial token
         try {
 			nextToken = scanToken();
-		} catch (IOException e) {
+		} 
+		catch (IOException e) {
 			e.printStackTrace();
 		}
-    }
+	}
     
+	/**
+	 * Return the nextToken, then get a new token
+	 * @return Token
+	 */
     public Token getNextToken () {
         Token returnToken = nextToken;
         if (nextToken.getTokenType() != TokenType.ENDFILE) {
             try {
 				nextToken = scanToken();
-			} catch (IOException e) {
+			} 
+			catch (IOException e) {
 				e.printStackTrace();
 			}
         }
         return returnToken;
     }
     
+	/**
+	 * Return the nextToken
+	 * @return Token
+	 */
     public Token viewNextToken () {
         return nextToken;
     }
     
-    //scanToken method - TODO
+	/**
+	 * Scan the input file for a singular token
+	 * @return Token
+	 * @throws IOException
+	 */
     private Token scanToken () throws IOException {
         
     	Token currentToken = new Token();
@@ -297,13 +322,15 @@ public class CminusScanner implements Scanner {
     		}
     	}
     	
+		// Clear the tokenString and return the token
+		tokenString = "";
         return currentToken;
     }
 
     /**
-     * USes identifier to see if it is a reserved word
-     * @param identifier
-     * @return
+     * Use identifier to see if it is a reserved word
+     * @param identifier The text the token parsed out
+     * @return TokenType
      */
 	private TokenType reservedLookup(String identifier) {
 		if (keywords.containsKey(identifier)) {
