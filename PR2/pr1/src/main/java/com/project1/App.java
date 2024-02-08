@@ -18,20 +18,18 @@ import java.io.IOException;
 */
 public class App {
     public static void main( String[] args ) {
-        //go up one directory level to find the test file
+        // Go up one directory level to find the test file
         String WorkingDir = System.getProperty("user.dir") + "\\PR2\\pr1\\src\\main\\java\\";
-        //Ask user for whitch test file to use
+
+        // Ask user for whitch test file to use
         System.out.println("Enter the name of the file you would like to test DIGIT INPUT:");
         java.util.Scanner input = new java.util.Scanner(System.in);
         String filenumber = input.nextLine();
         input.close();
         String fileNamePath = WorkingDir +  "test" + filenumber + ".txt";
-
-        System.out.println(fileNamePath);
-        //String filename = "../test4.txt";
         
+        // Initialize the scanner
         Scanner scanner = new CminusScanner(fileNamePath);
-
         try {
             FileWriter myWriter = new FileWriter(WorkingDir + "output.txt");
 
@@ -49,13 +47,12 @@ public class App {
                     System.out.println(line);
                     //write to file
                     myWriter.write(line + "\n");
-                    
                 }
             }
             myWriter.close();
-        }catch (IOException e) {
+        }
+        catch (IOException e) {
             e.printStackTrace();
         }
-
     }
 }
