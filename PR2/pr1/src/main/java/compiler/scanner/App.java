@@ -27,7 +27,7 @@ public class App {
         java.util.Scanner input = new java.util.Scanner(System.in);
         String filenumber = input.nextLine();
         input.close();
-        String fileNamePath = WorkingDir +  "test" + filenumber + ".txt";
+        String fileNamePath = WorkingDir +  "test" + filenumber + ".c";
         
         // Initialize the scanner
         Scanner scanner = new CminusScanner(fileNamePath);
