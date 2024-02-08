@@ -138,6 +138,7 @@ public class CminusScanner implements Scanner {
     			}
     			// In a comment
     			else if (c == '/') {
+					save = false;
     				state = StateType.INDIV;
     			}
     			else {
@@ -197,6 +198,7 @@ public class CminusScanner implements Scanner {
     			break;
     		case INDIV:
     			if (c == '*') {
+					save = false;
     				state = StateType.INCOMMENT;
     			}
     			else {
@@ -223,6 +225,7 @@ public class CminusScanner implements Scanner {
     		case INCOMMENTEXIT:
 				switch (c) {
 					case '/':
+						save = false;
 						state = StateType.START;
 						break;
 					// EOF indicator

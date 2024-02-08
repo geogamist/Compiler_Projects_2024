@@ -17,8 +17,18 @@ import com.project1.Token.TokenType;
 */
 public class App {
     public static void main( String[] args ) {
-        String filename = "PR2\\pr1\\src\\main\\java\\test4.txt";
-        Scanner scanner = new CminusScanner(filename);
+        //go up one directory level to find the test file
+        String fileNamePath = System.getProperty("user.dir") + "\\pr1\\src\\main\\java\\";
+        //Ask user for whitch test file to use
+        System.out.println("Enter the name of the file you would like to test DIGIT INPUT:");
+        java.util.Scanner input = new java.util.Scanner(System.in);
+        String filenumber = input.nextLine();
+        fileNamePath += "test" + filenumber + ".txt";
+
+        System.out.println(fileNamePath);
+        //String filename = "../test4.txt";
+        
+        Scanner scanner = new CminusScanner(fileNamePath);
 
         // Cycle through the program, collecting and printing all valid tokens
         while (scanner.viewNextToken().getTokenType() != TokenType.ENDFILE) {
