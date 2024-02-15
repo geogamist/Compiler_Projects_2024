@@ -38,45 +38,30 @@ import java.io.IOException;
 %cupdebug
 
 %{
-private StringBuilder tokenString = new StringBuilder();
-private PushbackReader inFile;
-private enum StateType {
-    START, INEQ, INLT, INGT, INNOT, INDIV, INCOMMENT,
-    INCOMMENTEXIT, INNUM, INNUMRROR, INID, DONE
-}
-
-private Token token(TokenType type) {
-    return new Token(type);
-}
-
-private Token token(TokenType type, Object data) {
-    return new Token(type, data);
-}
-
-public CminusScanner(String filename) {
-    try {
-        inFile = new PushbackReader(new FileReader(filename));
-    } 
-    catch (FileNotFoundException e) {
-        e.printStackTrace();
+    private StringBuilder tokenString = new StringBuilder();
+    private PushbackReader inFile;
+    private enum StateType {
+        START, INEQ, INLT, INGT, INNOT, INDIV, INCOMMENT,
+        INCOMMENTEXIT, INNUM, INNUMRROR, INID, DONE
     }
 
-    // Populate the initial token
-    try {
-        nextToken = scanToken();
-    } 
-    catch (IOException e) {
-        e.printStackTrace();
+    private Token token(TokenType type) {
+        return new Token(type);
     }
-}
 
-/**
- * Return the nextToken, then get a new token
- * @return Token
- */
-public Token getNextToken () {
-    Token returnToken = nextToken;
-    if (nextToken.getTokenType() != TokenType.ENDFILE) {
+    private Token token(TokenType type, Object data) {
+        return new Token(type, data);
+    }
+
+    public CminusScanner(String filename) {
+        try {
+            inFile = new PushbackReader(new FileReader(filename));
+        } 
+        catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+
+        // Populate the initial token
         try {
             nextToken = scanToken();
         } 
@@ -84,16 +69,32 @@ public Token getNextToken () {
             e.printStackTrace();
         }
     }
-    return returnToken;
-}
 
-/**
- * Return the nextToken
- * @return Token
- */
-public Token viewNextToken () {
-    return nextToken;
-}
+    /**
+    * Return the nextToken, then get a new token
+    * @return Token
+    */
+    public Token getNextToken () {
+        Token returnToken = nextToken;
+        if (nextToken.getTokenType() != TokenType.ENDFILE) {
+            try {
+                nextToken = scanToken();
+            } 
+            catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        return returnToken;
+    }
+
+    /**
+    * Return the nextToken
+    * @return Token
+    */
+    public Token viewNextToken () {
+        return nextToken;
+    }
+%}
 
 /* main character classes */
 LineTerminator = \r|\n|\r\n
@@ -102,8 +103,7 @@ InputCharacter = [^\r\n]
 WhiteSpace = {LineTerminator} | [ \t\f]
 
 /* comments */
-Comment = {TraditionalComment} | {EndOfLineComment} |
-        {DocumentationComment}
+Comment = {TraditionalComment} 
 
 TraditionalComment = "/*" [^*] ~"*/" | "/*" "*"+ "/"
 
