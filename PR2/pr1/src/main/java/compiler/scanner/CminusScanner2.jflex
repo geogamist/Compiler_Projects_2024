@@ -40,6 +40,10 @@ import java.io.IOException;
 private StringBuilder tokenString = new StringBuilder();
 private PushbackReader inFile;
 private Map<String, TokenType> keywords;
+private enum StateType {
+    START, INEQ, INLT, INGT, INNOT, INDIV, INCOMMENT,
+    INCOMMENTEXIT, INNUM, INNUMRROR, INID, DONE
+}
 
 private Token token(TokenType type) {
     return new Token(type);
