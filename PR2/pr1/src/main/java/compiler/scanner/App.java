@@ -30,7 +30,7 @@ public class App {
         String fileNamePath = WorkingDir +  "test" + filenumber + ".c";
         
         // Initialize the scanner
-        Scanner scanner = new CminusScanner(fileNamePath);
+        Scanner scanner = new CminusScanner2(fileNamePath);
         try {
             FileWriter myWriter = new FileWriter(WorkingDir + "output.txt");
 
