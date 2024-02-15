@@ -1,6 +1,9 @@
 package compiler.scanner;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.PushbackReader;
 
 import compiler.scanner.Token.TokenType;
 /** 
@@ -18,7 +21,7 @@ import compiler.scanner.Token.TokenType;
 * file into the CminusScanner and checking the output.
 */
 public class App {
-    public static void main( String[] args ) {
+    public static void main( String[] args ) throws FileNotFoundException {
         // Go up one directory level to find the test file
         String WorkingDir = System.getProperty("user.dir") + "\\PR2\\pr1\\src\\main\\java\\compiler\\scanner\\test\\";
 
@@ -30,7 +33,7 @@ public class App {
         String fileNamePath = WorkingDir +  "test" + filenumber + ".c";
         
         // Initialize the scanner
-        Scanner scanner = new CminusScanner(fileNamePath);
+        Scanner scanner = new CminusScanner2(fileNamePath);
         try {
             FileWriter myWriter = new FileWriter(WorkingDir + "output.txt");
 

@@ -14,7 +14,8 @@
 * both view and get the next Token.
 */
 
-import java_cup.runtime.*;
+package compiler.scanner;
+
 import java.util.*;
 import java.io.PushbackReader;
 import java.io.FileReader;
@@ -30,20 +31,11 @@ import java.io.IOException;
 %type Token
 
 %unicode
-
 %line
 %column
 
-%cup
-%cupdebug
-
 %{
-    private StringBuilder tokenString = new StringBuilder();
-    private PushbackReader inFile;
-    private enum StateType {
-        START, INEQ, INLT, INGT, INNOT, INDIV, INCOMMENT,
-        INCOMMENTEXIT, INNUM, INNUMRROR, INID, DONE
-    }
+    private Token nextToken;
 
     private Token token(TokenType type) {
         return new Token(type);
@@ -53,17 +45,13 @@ import java.io.IOException;
         return new Token(type, data);
     }
 
-    public CminusScanner(String filename) {
-        try {
-            inFile = new PushbackReader(new FileReader(filename));
-        } 
-        catch (FileNotFoundException e) {
-            e.printStackTrace();
-        }
+    public CminusScanner2(String filename) throws FileNotFoundException {
+        // Call the constructor
+        this(new PushbackReader(new FileReader(filename)));
 
         // Populate the initial token
         try {
-            nextToken = scanToken();
+            nextToken = yylex();
         } 
         catch (IOException e) {
             e.printStackTrace();
@@ -78,7 +66,7 @@ import java.io.IOException;
         Token returnToken = nextToken;
         if (nextToken.getTokenType() != TokenType.ENDFILE) {
             try {
-                nextToken = scanToken();
+                nextToken = yylex();
             } 
             catch (IOException e) {
                 e.printStackTrace();
