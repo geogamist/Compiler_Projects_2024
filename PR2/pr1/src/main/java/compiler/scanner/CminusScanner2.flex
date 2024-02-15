@@ -1,3 +1,5 @@
+package compiler.scanner;
+
 /** 
 * This class implements the Scanner ADT, providing support for the Cminus language.
 *
@@ -14,7 +16,6 @@
 * both view and get the next Token.
 */
 
-import java_cup.runtime.*;
 import java.util.*;
 import java.io.PushbackReader;
 import java.io.FileReader;
@@ -34,12 +35,10 @@ import java.io.IOException;
 %line
 %column
 
-%cup
-%cupdebug
-
 %{
     private StringBuilder tokenString = new StringBuilder();
     private PushbackReader inFile;
+    private Token nextToken;
     private enum StateType {
         START, INEQ, INLT, INGT, INNOT, INDIV, INCOMMENT,
         INCOMMENTEXIT, INNUM, INNUMRROR, INID, DONE
@@ -53,7 +52,7 @@ import java.io.IOException;
         return new Token(type, data);
     }
 
-    public CminusScanner(String filename) {
+    public CminusScanner2(String filename) {
         try {
             inFile = new PushbackReader(new FileReader(filename));
         } 
