@@ -1,3 +1,5 @@
+package compiler.scanner;
+
 /** 
 * This class implements the Scanner ADT, providing support for the Cminus language.
 *

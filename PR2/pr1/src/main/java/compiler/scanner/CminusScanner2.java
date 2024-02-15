@@ -30,6 +30,7 @@ import java.io.IOException;
 
 @SuppressWarnings("fallthrough")
 public class CminusScanner2 implements Scanner {
+public class CminusScanner2 implements Scanner {
 
   /** This character denotes the end of file. */
   public static final int YYEOF = -1;
@@ -613,6 +614,7 @@ public class CminusScanner2 implements Scanner {
 
   /** Whether the user-EOF-code has already been executed. */
   @SuppressWarnings("unused")
+  @SuppressWarnings("unused")
   private boolean zzEOFDone;
 
   /* user code: */
@@ -934,6 +936,7 @@ public class CminusScanner2 implements Scanner {
    * @return the next token.
    * @exception java.io.IOException if any I/O-Error occurs.
    */
+  public Token yylex() throws java.io.IOException
   public Token yylex() throws java.io.IOException
   {
     int zzInput;
