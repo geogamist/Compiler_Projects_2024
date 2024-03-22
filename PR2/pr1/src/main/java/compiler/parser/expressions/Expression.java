@@ -6,12 +6,26 @@ import compiler.scanner.Token.*;
 
 public abstract class Expression {
 
-    private TokenType type;
-    private Object lhs;
-    private Object rhs;
-
     public static Expression parseFactor() {
-        return null;
+        switch (CMinusParser.currentToken.getTokenType()) {
+            case Token.LPAREN_TOKEN:
+                advanceToken();
+                Expression returnExpr = parseExpression ();
+                matchToken(Token.RPAREN_TOKEN);
+                return returnExpr;
+                break;
+            case Token.IDENT_TOKEN:
+                Token oldToken = advanceToken();
+                return createIdentExpr(oldToken);
+                break;
+            case Token.NUM_TOKEN:
+               Token oldToken = advanceToken();
+                return createNumExpr(oldToken);
+                break;
+            default:
+                logParseError();
+                return null;
+        }
     };
 
     public static Expression parseTerm() {

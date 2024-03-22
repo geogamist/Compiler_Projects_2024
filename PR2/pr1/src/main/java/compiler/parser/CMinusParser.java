@@ -1,6 +1,5 @@
 package compiler.parser;
 
-import compiler.parser.expressions.Expression;
 import compiler.parser.general.Program;
 import compiler.scanner.Token;
 import compiler.scanner.Token.TokenType;
