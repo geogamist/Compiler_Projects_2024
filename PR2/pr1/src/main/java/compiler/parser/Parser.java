@@ -1,6 +1,8 @@
 package compiler.parser;
 
+import compiler.parser.general.Program;
+
 public interface Parser {
-    public BinaryExpression parse ();
-    public void printTree ();
+    public Program parse();
+    public void printTree();
 }
