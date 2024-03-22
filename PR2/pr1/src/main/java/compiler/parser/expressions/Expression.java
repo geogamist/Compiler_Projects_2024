@@ -6,7 +6,10 @@ import compiler.scanner.Token.*;
 
 public abstract class Expression {
 
+    
+
     public static Expression parseFactor() {
+        /*
         switch (CMinusParser.currentToken.getTokenType()) {
             case Token.LPAREN_TOKEN:
                 advanceToken();
@@ -26,6 +29,8 @@ public abstract class Expression {
                 logParseError();
                 return null;
         }
+        */
+        return null;
     };
 
     public static Expression parseTerm() {
@@ -34,7 +39,7 @@ public abstract class Expression {
         while (isMulop(CMinusParser.currentToken.getTokenType())) {
             Token oldToken = CMinusParser.advanceToken();
             Expression rhs = parseFactor();
-            lhs = createBinopExpression(oldToken, lhs, rhs);
+            lhs = BinaryExpression(oldToken, lhs, rhs);
         }
 
         return lhs;
@@ -46,18 +51,36 @@ public abstract class Expression {
         while (isMulop(CMinusParser.currentToken.getTokenType())) {
             Token oldToken = CMinusParser.advanceToken();
             Expression rhs = parseFactor();
-            lhs = createBinopExpression(oldToken, lhs, rhs);
+            lhs = BinaryExpression(oldToken, lhs, rhs);
         }
 
         return lhs;
     };
 
-    public static Expression createBinopExpression(Token type, Expression lhs, Expression rhs) {
-        return null;
+    public static Expression parseAdditiveExpression() {
+
+        Expression lhs = parseTerm();
+
+        while (isAddop(CMinusParser.currentToken.getTokenType())) {
+            Token oldToken = CMinusParser.advanceToken();
+            Expression rhs = parseTerm();
+            lhs = BinaryExpression(oldToken, lhs, rhs);
+        }
+
+        return lhs;
     }
 
-    public static Expression createNumExpression(Token type) {
-        return null;
+    public static Expression parseAdditiveExpressionPrime() {
+
+        Expression lhs = parseTermPrime();
+
+        while (isAddop(CMinusParser.currentToken.getTokenType())) {
+            Token oldToken = CMinusParser.advanceToken();
+            Expression rhs = parseTerm();
+            lhs = BinaryExpression(oldToken, lhs, rhs);
+        }
+
+        return lhs;
     }
 
     abstract void print();
