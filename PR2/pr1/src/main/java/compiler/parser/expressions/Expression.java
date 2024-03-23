@@ -6,57 +6,80 @@ import compiler.scanner.Token.*;
 
 public abstract class Expression {
 
-    
-
-    public static Expression parseFactor() {
-        /*
+    public static Expression parseExpression() {
         switch (CMinusParser.currentToken.getTokenType()) {
-            case Token.LPAREN_TOKEN:
-                advanceToken();
-                Expression returnExpr = parseExpression ();
-                matchToken(Token.RPAREN_TOKEN);
-                return returnExpr;
+            case ID:
+                CMinusParser.matchToken(TokenType.ID);
+                parseExpressionPrime();
                 break;
-            case Token.IDENT_TOKEN:
-                Token oldToken = advanceToken();
-                return createIdentExpr(oldToken);
+            case NUM:
+                CMinusParser.matchToken(TokenType.NUM);
+                parseExpressionPrime();
                 break;
-            case Token.NUM_TOKEN:
-               Token oldToken = advanceToken();
-                return createNumExpr(oldToken);
+            case LPAREN:
+                CMinusParser.matchToken(TokenType.LPAREN);
+                parseExpression();
+                CMinusParser.matchToken(TokenType.RPAREN);
+                parseSimpleExpressionPrime();
                 break;
             default:
-                logParseError();
-                return null;
+                throw new IllegalArgumentException("Unexpected value: " + CMinusParser.currentToken.getTokenType());
         }
-        */
         return null;
     };
 
-    public static Expression parseTerm() {
-        Expression lhs = parseFactor();
-
-        while (isMulop(CMinusParser.currentToken.getTokenType())) {
-            Token oldToken = CMinusParser.advanceToken();
-            Expression rhs = parseFactor();
-            lhs = BinaryExpression(oldToken, lhs, rhs);
+    private static void parseExpressionPrime() {
+        switch (CMinusParser.currentToken.getTokenType()) {
+            case ASSIGN:
+                CMinusParser.matchToken(TokenType.ASSIGN);
+                break;
+            case LBRACKET:
+                CMinusParser.matchToken(TokenType.LBRACKET);
+                parseExpression();
+                CMinusParser.matchToken(TokenType.RBRACKET);
+                CMinusParser.matchToken(TokenType.ASSIGN);
+                parseExpressionPrimePrime();
+                break;
+            case LPAREN:
+                CMinusParser.matchToken(TokenType.LPAREN);
+                parseArgs();
+                CMinusParser.matchToken(TokenType.RPAREN);
+                break;
+        
+            default:
+                throw new IllegalArgumentException("Unexpected value: " + CMinusParser.currentToken.getTokenType());
         }
+    }
 
-        return lhs;
-    };
-
-    public static Expression parseTermPrime() {
-        Expression lhs = null;
-
-        while (isMulop(CMinusParser.currentToken.getTokenType())) {
-            Token oldToken = CMinusParser.advanceToken();
-            Expression rhs = parseFactor();
-            lhs = BinaryExpression(oldToken, lhs, rhs);
+    private static void parseExpressionPrimePrime() {
+        switch (CMinusParser.currentToken.getTokenType()) {
+            case ASSIGN:
+                CMinusParser.matchToken(TokenType.ASSIGN);
+                parseExpression();
+                break;
+            case TIMES:
+                parseSimpleExpressionPrime();   
+                break;
+            case OVER:
+                parseSimpleExpressionPrime();
+                break;
+            default:
+                throw new IllegalArgumentException("Unexpected value: " + CMinusParser.currentToken.getTokenType());
         }
+    }
 
-        return lhs;
-    };
-
+    private static void parseSimpleExpressionPrime() {
+        parseAdditiveExpressionPrime();
+        if (CMinusParser.currentToken.getTokenType() == TokenType.LT ||
+            CMinusParser.currentToken.getTokenType() == TokenType.LE ||
+            CMinusParser.currentToken.getTokenType() == TokenType.GT ||
+            CMinusParser.currentToken.getTokenType() == TokenType.GE ||
+            CMinusParser.currentToken.getTokenType() == TokenType.EQ ||
+            CMinusParser.currentToken.getTokenType() == TokenType.NE) {
+                CMinusParser.advanceToken();
+                parseAdditiveExpression();
+        }
+    }
     public static Expression parseAdditiveExpression() {
 
         Expression lhs = parseTerm();
@@ -64,7 +87,7 @@ public abstract class Expression {
         while (isAddop(CMinusParser.currentToken.getTokenType())) {
             Token oldToken = CMinusParser.advanceToken();
             Expression rhs = parseTerm();
-            lhs = BinaryExpression(oldToken, lhs, rhs);
+            lhs = new BinaryExpression(oldToken, lhs, rhs);
         }
 
         return lhs;
@@ -77,14 +100,81 @@ public abstract class Expression {
         while (isAddop(CMinusParser.currentToken.getTokenType())) {
             Token oldToken = CMinusParser.advanceToken();
             Expression rhs = parseTerm();
-            lhs = BinaryExpression(oldToken, lhs, rhs);
+            lhs = new BinaryExpression(oldToken, lhs, rhs);
         }
 
         return lhs;
     }
+    public static Expression parseTerm() {
+        Expression lhs = parseFactor();
 
-    abstract void print();
+        while (isMulop(CMinusParser.currentToken.getTokenType())) {
+            Token oldToken = CMinusParser.advanceToken();
+            Expression rhs = parseFactor();
+            lhs = new BinaryExpression(oldToken, lhs, rhs);
+        }
 
+        return lhs;
+    };
+
+    public static Expression parseTermPrime() {
+        Expression lhs = null;
+
+        while (isMulop(CMinusParser.currentToken.getTokenType())) {
+            Token oldToken = CMinusParser.advanceToken();
+            Expression rhs = parseFactor();
+            lhs = new BinaryExpression(oldToken, lhs, rhs);
+        }
+
+        return lhs;
+    };
+
+    public static Expression parseFactor() {
+        switch (CMinusParser.currentToken.getTokenType()) {
+            case ID:
+                CMinusParser.matchToken(TokenType.ID);
+                parseVarcall();
+                break;
+            case NUM:
+                CMinusParser.matchToken(TokenType.NUM);
+                break;
+            case LPAREN:
+                CMinusParser.matchToken(TokenType.LPAREN);
+                parseExpression();
+                CMinusParser.matchToken(TokenType.RPAREN);
+                break;
+            default:
+                throw new IllegalArgumentException("Unexpected value: " + CMinusParser.currentToken.getTokenType());
+        }
+        return null;
+    }
+
+    private static void parseVarcall() {
+        switch (CMinusParser.currentToken.getTokenType()) {
+            case LBRACKET:
+                CMinusParser.matchToken(TokenType.LBRACKET);
+                parseExpression();
+                CMinusParser.matchToken(TokenType.RBRACKET);
+                break;
+            case LPAREN:
+                CMinusParser.matchToken(TokenType.LPAREN);
+                parseArgs();
+                CMinusParser.matchToken(TokenType.RPAREN);
+                break;
+            default:
+                return;
+        }
+    }
+
+    private static void parseArgs() {
+        parseExpression();
+        while (CMinusParser.currentToken.getTokenType() == TokenType.COMMA) {
+            CMinusParser.matchToken(TokenType.COMMA);
+            parseExpression();
+        }
+    }
+
+    //isAddop and isMulop are helper functions to determine if the current token is an addop or mulop
     public static boolean isAddop(TokenType type) {
         if (CMinusParser.currentToken.getTokenType() == TokenType.PLUS ||
             CMinusParser.currentToken.getTokenType() == TokenType.MINUS) {
@@ -100,4 +190,6 @@ public abstract class Expression {
         }
         return false;
     }
+    abstract void print();
+
 }

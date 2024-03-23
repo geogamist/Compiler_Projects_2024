@@ -4,24 +4,32 @@ import compiler.parser.declarations.Declaration;
 import compiler.scanner.Token.*;
 import java.util.*;
 
+import javax.lang.model.type.DeclaredType;
+
 public class Program {
 
-    private List<Declaration> declarations;
+    Declaration lhs;
+    Declaration rhs;
 
     public Program() {
-        declarations = new ArrayList<Declaration>();
+        lhs = null;
+        rhs = null;
+    };
+    public Program(Declaration lhs, Declaration rhs) {
+        this.lhs = lhs;
+        this.rhs = rhs;
     };
 
     public static Program parseProgram() {
         Program program = new Program();
-        Declaration declaration = Declaration.parseDeclaration();
-        program.declarations.add(declaration);
+        Declaration lhs = Declaration.parseDeclaration();
+        Declaration rhs = null;
         
-        while (CMinusParser.currentToken.getTokenType() == TokenType.VOID || 
-               CMinusParser.currentToken.getTokenType() == TokenType.INT) {
-            CMinusParser.advanceToken();
-            Declaration newDeclaration = Declaration.parseDeclaration();
-            program.declarations.add(newDeclaration);
+        while (CMinusParser.currentToken.getTokenType() == TokenType.VOID || CMinusParser.currentToken.getTokenType() == TokenType.INT) {
+            
+            rhs = Declaration.parseDeclaration();
+            program = new Program(lhs, rhs);
+
         }
 
         return program;
