@@ -1,24 +1,27 @@
 package compiler.parser.declarations;
 import compiler.parser.CMinusParser;
+import compiler.parser.expressions.Expression;
+import compiler.parser.expressions.IdentifierExpression;
 import compiler.parser.expressions.NumericExpression;
 import compiler.scanner.Token;
 import compiler.scanner.Token.TokenType;
-import compiler.parser.general.Param;
+import compiler.parser.general.Params;
 import compiler.parser.statements.Statement;
 
 public abstract class Declaration {
 
-    public String identifier;
+    public Expression identifierExpression;
     public String type;
 
     public Declaration() {
-        identifier = null;
+        identifierExpression = null;
         type = null;
     }
 
     public static Declaration parseDeclaration() {
 
         Declaration declaration = null;
+        Expression identifierExpression = null;
         String identifier = null;
         String type = null;
 
@@ -26,14 +29,16 @@ public abstract class Declaration {
             case VOID:
                 type = (String)CMinusParser.matchToken(TokenType.VOID);
                 identifier = (String)CMinusParser.matchToken(TokenType.ID);
+                identifierExpression = new IdentifierExpression(identifier);
                 declaration = parseFunctionDeclaration();
-                declaration.intialize(type, identifier);
+                declaration.intialize(type, identifierExpression);
                 break;
             case INT:
                 type = (String)CMinusParser.matchToken(TokenType.INT);
                 identifier = (String)CMinusParser.matchToken(TokenType.ID);
-                declaration = parseDeclarationPrime();
-                declaration.intialize(type, identifier);
+                identifierExpression = new IdentifierExpression(identifier);
+                declaration = parseDeclarationPrime(identifierExpression);
+                declaration.intialize(type, identifierExpression);
                 break;
             default:
                 throw new IllegalArgumentException("Unexpected value: " + CMinusParser.currentToken.getTokenType());
@@ -49,7 +54,7 @@ public abstract class Declaration {
         switch (CMinusParser.currentToken.getTokenType()) {
             case LPAREN:
                 CMinusParser.matchToken(TokenType.LPAREN);
-                Param params = Param.parseParams();
+                Params params = Params.parseParams();
                 CMinusParser.matchToken(TokenType.RPAREN);
                 Statement compoundStatement = Statement.parseCompoundStatement();
                 declaration = new FunctionDeclaration(params, compoundStatement);
@@ -61,10 +66,9 @@ public abstract class Declaration {
         return declaration;
     }
 
-    public static Declaration parseDeclarationPrime() {
+    public static Declaration parseDeclarationPrime(Expression lhs) {
 
         Declaration declaration = null;
-        String number = null;
 
         switch (CMinusParser.currentToken.getTokenType()) {
             case SEMI:
@@ -72,9 +76,10 @@ public abstract class Declaration {
                 break;
             case LBRACKET:
                 CMinusParser.matchToken(Token.TokenType.LBRACKET);
-                number = (String)CMinusParser.matchToken(Token.TokenType.NUM);
+                String number = (String)CMinusParser.matchToken(Token.TokenType.NUM);
                 NumericExpression numericExpression = new NumericExpression(number);
-                declaration = new DeclarationPrime(numericExpression);
+                Expression identifierExpression = new IdentifierExpression(((IdentifierExpression)lhs).getIdentifier(), numericExpression);
+                declaration = new DeclarationPrime(identifierExpression);
                 CMinusParser.matchToken(Token.TokenType.RBRACKET);
                 break;
             case LPAREN:
@@ -87,9 +92,9 @@ public abstract class Declaration {
         return declaration;
     }
 
-    private void intialize(String type, String identifier) {
+    private void intialize(String type, Expression identifierExpression) {
         this.type = type;
-        this.identifier = identifier;
+        this.identifierExpression = identifierExpression;
     }
 
     abstract void print();

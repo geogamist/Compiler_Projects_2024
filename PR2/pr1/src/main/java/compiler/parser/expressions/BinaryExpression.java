@@ -9,7 +9,6 @@ public class BinaryExpression extends Expression {
     String operator;
 
     public BinaryExpression(Token token, Expression lhs, Expression rhs) {
-        super();
         switch (token.getTokenType()) {
             case TIMES:
                 operator = "*";

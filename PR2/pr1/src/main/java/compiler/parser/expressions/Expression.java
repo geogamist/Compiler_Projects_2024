@@ -3,43 +3,30 @@ package compiler.parser.expressions;
 import compiler.parser.CMinusParser;
 import compiler.scanner.Token;
 import compiler.scanner.Token.*;
+import java.util.*;
 
 public abstract class Expression {
 
-    private String value;
-
-    public Expression() {
-        this.value = null;
-    }
-
     public static Expression parseExpression() {
 
-        String value = null;
-        Expression expression = null;
-        Expression simpleExpressionPrime = null;
         Expression returnExpression = null;
-        Expression numericExpression = null;
-        Expression identifierExpression = null;
 
         switch (CMinusParser.currentToken.getTokenType()) {
             case ID:
-                value = (String)CMinusParser.matchToken(TokenType.ID);
-                identifierExpression = new IdentifierExpression(value, null);
-                expression = parseExpressionPrime();
-                returnExpression = new BinaryExpression(null, identifierExpression, expression);
+                String identifier = (String)CMinusParser.matchToken(TokenType.ID);
+                Expression identifierExpression = new IdentifierExpression(identifier);
+                returnExpression = parseExpressionPrime(identifierExpression);
                 break;
             case NUM:
-                value = (String)CMinusParser.matchToken(TokenType.NUM);
-                numericExpression = new NumericExpression(value);
-                simpleExpressionPrime = parseSimpleExpressionPrime();
-                returnExpression = new BinaryExpression(null, numericExpression, simpleExpressionPrime);
+                String number = (String)CMinusParser.matchToken(TokenType.NUM);
+                Expression numericExpression = new NumericExpression(number);
+                returnExpression = parseSimpleExpressionPrime(numericExpression);
                 break;
             case LPAREN:
                 CMinusParser.matchToken(TokenType.LPAREN);
-                expression = parseExpression();
+                Expression expression = parseExpression();
                 CMinusParser.matchToken(TokenType.RPAREN);
-                simpleExpressionPrime = parseSimpleExpressionPrime();
-                returnExpression = new BinaryExpression(null, expression, simpleExpressionPrime);
+                returnExpression = parseSimpleExpressionPrime(expression);
                 break;
             default:
                 throw new IllegalArgumentException("Unexpected value: " + CMinusParser.currentToken.getTokenType());
@@ -48,36 +35,34 @@ public abstract class Expression {
         return returnExpression;
     };
 
-    private static Expression parseExpressionPrime() {
+    private static Expression parseExpressionPrime(Expression lhs) {
 
         Expression returnExpression = null;
         Expression expression = null;
-        Expression expressionPrimePrime = null;
-        Expression args = null;
 
         switch (CMinusParser.currentToken.getTokenType()) {
             case ASSIGN:
                 CMinusParser.matchToken(TokenType.ASSIGN);
                 expression = parseExpression();
-                returnExpression = new AssignExpression(expression);
+                returnExpression = new AssignExpression(lhs, expression);
                 break;
             case LBRACKET:
                 CMinusParser.matchToken(TokenType.LBRACKET);
                 expression = parseExpression();
                 CMinusParser.matchToken(TokenType.RBRACKET);
-                expressionPrimePrime = parseExpressionPrimePrime();
-                returnExpression = new BinaryExpression(null, expression, expressionPrimePrime);
+                Expression identifierExpression = new IdentifierExpression(((IdentifierExpression)lhs).getIdentifier(), expression);
+                returnExpression = parseExpressionPrimePrime(identifierExpression);
                 break;
             case LPAREN:
                 CMinusParser.matchToken(TokenType.LPAREN);
-                args = parseArgs();
+                List<Expression> args = parseArgs();
                 CMinusParser.matchToken(TokenType.RPAREN);
-                expression = parseSimpleExpressionPrime();
-                returnExpression = new BinaryExpression(null, args, expression);
+                Expression callExpression = new CallExpression(lhs, args);
+                returnExpression = parseSimpleExpressionPrime(callExpression);
                 break;
             case TIMES:
             case OVER:
-                returnExpression = parseSimpleExpressionPrime();
+                returnExpression = parseSimpleExpressionPrime(lhs);
                 break;
             default:
                 throw new IllegalArgumentException("Unexpected value: " + CMinusParser.currentToken.getTokenType());
@@ -86,20 +71,19 @@ public abstract class Expression {
         return returnExpression;
     }
 
-    private static Expression parseExpressionPrimePrime() {
+    private static Expression parseExpressionPrimePrime(Expression lhs) {
 
         Expression returnExpression = null;
-        Expression expression = null;
 
         switch (CMinusParser.currentToken.getTokenType()) {
             case ASSIGN:
                 CMinusParser.matchToken(TokenType.ASSIGN);
-                expression = parseExpression();
-                returnExpression = new AssignExpression(expression);
+                Expression expression = parseExpression();
+                returnExpression = new AssignExpression(lhs, expression);
                 break;
             case TIMES:
             case OVER:
-                returnExpression = parseSimpleExpressionPrime();
+                returnExpression = parseSimpleExpressionPrime(lhs);
                 break;
             default:
                 throw new IllegalArgumentException("Unexpected value: " + CMinusParser.currentToken.getTokenType());
@@ -108,15 +92,14 @@ public abstract class Expression {
         return returnExpression;
     }
 
-    private static Expression parseSimpleExpressionPrime() {
+    private static Expression parseSimpleExpressionPrime(Expression lhs) {
 
         Expression returnExpression = null;
-        Expression additiveExpression = null;
 
-        returnExpression = parseAdditiveExpressionPrime();
+        returnExpression = parseAdditiveExpressionPrime(lhs);
         if (isRelop(CMinusParser.currentToken.getTokenType())) {
             Token oldToken = CMinusParser.advanceToken();
-            additiveExpression = parseAdditiveExpression();
+            Expression additiveExpression = parseAdditiveExpression();
             returnExpression = new BinaryExpression(oldToken, returnExpression, additiveExpression);
         }
 
@@ -136,17 +119,17 @@ public abstract class Expression {
         return lhs;
     }
 
-    public static Expression parseAdditiveExpressionPrime() {
+    public static Expression parseAdditiveExpressionPrime(Expression lhs) {
 
-        Expression lhs = parseTermPrime();
+        Expression left = parseTermPrime(lhs);
 
         while (isAddop(CMinusParser.currentToken.getTokenType())) {
             Token oldToken = CMinusParser.advanceToken();
             Expression rhs = parseTerm();
-            lhs = new BinaryExpression(oldToken, lhs, rhs);
+            left = new BinaryExpression(oldToken, left, rhs);
         }
 
-        return lhs;
+        return left;
     }
     
     public static Expression parseTerm() {
@@ -162,35 +145,32 @@ public abstract class Expression {
         return lhs;
     };
 
-    public static Expression parseTermPrime() {
-        Expression lhs = null;
+    public static Expression parseTermPrime(Expression lhs) {
+
+        Expression left = lhs;
 
         while (isMulop(CMinusParser.currentToken.getTokenType())) {
             Token oldToken = CMinusParser.advanceToken();
             Expression rhs = parseFactor();
-            lhs = new BinaryExpression(oldToken, lhs, rhs);
+            left = new BinaryExpression(oldToken, left, rhs);
         }
 
-        return lhs;
+        return left;
     };
 
     public static Expression parseFactor() {
 
-        String value = null;
         Expression returnExpression = null;
-        Expression identifierExpression = null;
-        Expression expression = null;
 
         switch (CMinusParser.currentToken.getTokenType()) {
             case ID:
-                value = (String)CMinusParser.matchToken(TokenType.ID);
-                identifierExpression = new IdentifierExpression(value, null);
-                expression = parseVarcall();
-                returnExpression = new CallExpression(identifierExpression, expression);
+                String identifier = (String)CMinusParser.matchToken(TokenType.ID);
+                Expression identifierExpression = new IdentifierExpression(identifier);
+                returnExpression = parseVarcall(identifierExpression);
                 break;
             case NUM:
-                value = (String)CMinusParser.matchToken(TokenType.NUM);
-                returnExpression = new NumericExpression(value);
+                String number = (String)CMinusParser.matchToken(TokenType.NUM);
+                returnExpression = new NumericExpression(number);
                 break;
             case LPAREN:
                 CMinusParser.matchToken(TokenType.LPAREN);
@@ -204,19 +184,21 @@ public abstract class Expression {
         return returnExpression;
     }
 
-    private static Expression parseVarcall() {
+    private static Expression parseVarcall(Expression lhs) {
 
         Expression returnExpression = null;
 
         switch (CMinusParser.currentToken.getTokenType()) {
             case LBRACKET:
                 CMinusParser.matchToken(TokenType.LBRACKET);
-                returnExpression = parseExpression();
+                Expression capacity = parseExpression();
+                returnExpression = new IdentifierExpression(((IdentifierExpression)lhs).getIdentifier(), capacity);
                 CMinusParser.matchToken(TokenType.RBRACKET);
                 break;
             case LPAREN:
                 CMinusParser.matchToken(TokenType.LPAREN);
-                returnExpression = parseArgs();
+                List<Expression> args = parseArgs();
+                returnExpression = new CallExpression(lhs, args);
                 CMinusParser.matchToken(TokenType.RPAREN);
                 break;
             default:
@@ -226,21 +208,19 @@ public abstract class Expression {
         return returnExpression;
     }
 
-    private static Expression parseArgs() {
+    private static List<Expression> parseArgs() {
 
-        Expression lhs = parseExpression();
+        List<Expression> args = new ArrayList<>();
+        Expression arg = parseExpression();
+        args.add(arg);
 
         while (CMinusParser.currentToken.getTokenType() == TokenType.COMMA) {
-            Token oldToken = CMinusParser.advanceToken();
-            Expression rhs = parseExpression();
-            lhs = new BinaryExpression(oldToken, lhs, rhs);
+            CMinusParser.advanceToken();
+            arg = parseExpression();
+            args.add(arg);
         }
 
-        return lhs;
-    }
-
-    public void initialize(String value) {
-        this.value = value;
+        return args;
     }
 
     //isAddop, isMulop, and isRelop are helper functions to determine if the current token is an addop, mulop, or relop

@@ -2,11 +2,14 @@ package compiler.parser.expressions;
 
 public class NumericExpression extends Expression {
 
-    int value;
+    private int value;
 
     public NumericExpression(String value) {
-        super();
         this.value = Integer.parseInt(value);
+    }
+
+    public int getValue() {
+        return value;
     }
 
     void print() {};

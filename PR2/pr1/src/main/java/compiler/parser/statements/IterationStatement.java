@@ -8,7 +8,6 @@ public class IterationStatement extends Statement {
     Statement statement;
 
     public IterationStatement(Expression expression, Statement statement) {
-        super();
         this.expression = expression;
         this.statement = statement;
     }

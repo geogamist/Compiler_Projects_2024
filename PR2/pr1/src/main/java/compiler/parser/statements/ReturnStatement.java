@@ -7,7 +7,6 @@ public class ReturnStatement extends Statement {
     Expression expression;
 
     public ReturnStatement(Expression expression) {
-        super();
         this.expression = expression;
     }
 

@@ -2,11 +2,12 @@ package compiler.parser.expressions;
 
 public class AssignExpression extends Expression {
 
-    Expression rhs;
+    Expression identifierExpression;
+    Expression assignExpression;
 
-    AssignExpression(Expression rhs) {
-        super();
-        this.rhs = rhs;
+    AssignExpression(Expression identifierExpression, Expression assignExpression) {
+        this.identifierExpression = identifierExpression;
+        this.assignExpression = assignExpression;
     }
 
     void print() {};

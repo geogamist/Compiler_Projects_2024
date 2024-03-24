@@ -9,7 +9,6 @@ public class CompoundStatement extends Statement {
     List<Statement> statement;
 
     CompoundStatement(List<Expression> declarations, List<Statement> statement) {
-        super();
         this.declarations = declarations;
         this.statement = statement;
     }

@@ -44,12 +44,12 @@ public abstract class Statement {
 
     public static Statement parseCompoundStatement() {
 
-        Statement statement = null;
         Statement returnStatement = null;
-        List<Statement> statements = new ArrayList<Statement>();
-        List<Expression> localDeclarations = new ArrayList<Expression>();
-
         CMinusParser.matchToken(TokenType.LBRACE);
+
+        // Parse local declarations
+        List<Expression> localDeclarations = new ArrayList<Expression>();
+        String LocalDeclarationType = "INT";
         while (CMinusParser.currentToken.getTokenType() == TokenType.INT) {
 
             Expression identifierExpression = null;
@@ -67,10 +67,12 @@ public abstract class Statement {
             }
             
             identifierExpression = new IdentifierExpression(identifier, numericExpression);
-            identifierExpression.initialize(value);
             localDeclarations.add(identifierExpression);
         }
 
+        // Parse statements
+        List<Statement> statements = new ArrayList<Statement>();
+        Statement statement = null;
         while (CMinusParser.currentToken.getTokenType() == TokenType.ID ||
                CMinusParser.currentToken.getTokenType() == TokenType.NUM ||
                CMinusParser.currentToken.getTokenType() == TokenType.LPAREN ||
@@ -113,13 +115,12 @@ public abstract class Statement {
     public static Statement parseExpressionStatement() {
 
         Statement statement = null;
-        Expression expression = null;
 
         switch (CMinusParser.currentToken.getTokenType()) {
             case ID:
             case NUM:
             case LPAREN:
-                expression = Expression.parseExpression();
+                Expression expression = Expression.parseExpression();
                 statement = new ExpressionStatement(expression);
             case SEMI:
                 CMinusParser.matchToken(TokenType.SEMI);
@@ -134,17 +135,15 @@ public abstract class Statement {
     public static Statement parseSelectionStatement() {
 
         Statement returnStatement = null;
-        Expression expression = null;
-        Statement thenStatement = null;
         Statement elseStatement = null;
 
         switch (CMinusParser.currentToken.getTokenType()) {
             case IF:
                 CMinusParser.matchToken(TokenType.IF);
                 CMinusParser.matchToken(TokenType.LPAREN);
-                expression = Expression.parseExpression();
+                Expression expression = Expression.parseExpression();
                 CMinusParser.matchToken(TokenType.RPAREN);
-                thenStatement = Statement.parseStatement();
+                Statement thenStatement = Statement.parseStatement();
                 if (CMinusParser.currentToken.getTokenType() == TokenType.ELSE) {
                     CMinusParser.matchToken(TokenType.ELSE);
                     elseStatement = Statement.parseStatement();
@@ -161,16 +160,14 @@ public abstract class Statement {
     public static Statement parseIterationStatement() {
 
         Statement returnStatement = null;
-        Expression expression = null;
-        Statement statement = null;
 
         switch (CMinusParser.currentToken.getTokenType()) {
             case WHILE:
                 CMinusParser.matchToken(TokenType.WHILE);
                 CMinusParser.matchToken(TokenType.LPAREN);
-                expression = Expression.parseExpression();
+                Expression expression = Expression.parseExpression();
                 CMinusParser.matchToken(TokenType.RPAREN);
-                statement = Statement.parseStatement();
+                Statement statement = Statement.parseStatement();
                 returnStatement = new IterationStatement(expression, statement);
                 break;
             default:

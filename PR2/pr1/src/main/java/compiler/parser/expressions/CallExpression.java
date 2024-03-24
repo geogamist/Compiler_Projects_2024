@@ -1,14 +1,15 @@
 package compiler.parser.expressions;
 
+import java.util.*;
+
 public class CallExpression extends Expression {
 
-    Expression identifierExpression;
-    Expression varCall;
+    Expression function;
+    List<Expression> args;
 
-    CallExpression(Expression identifierExpression, Expression varCall) {
-        super();
-        this.identifierExpression = identifierExpression;
-        this.varCall = varCall;
+    CallExpression(Expression function, List<Expression> args) {
+        this.function = function;
+        this.args = args;
     }
 
     void print() {};

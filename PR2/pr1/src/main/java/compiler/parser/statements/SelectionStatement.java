@@ -9,7 +9,6 @@ public class SelectionStatement extends Statement {
     Statement elseStatement;
 
     public SelectionStatement(Expression expression, Statement thenStatement, Statement elseStatement) {
-        super();
         this.expression = expression;
         this.thenStatement = thenStatement;
         this.elseStatement = elseStatement;
