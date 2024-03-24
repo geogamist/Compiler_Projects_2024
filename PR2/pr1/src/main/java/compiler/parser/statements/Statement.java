@@ -91,7 +91,7 @@ public abstract class Statement {
                     statement = parseExpressionStatement();
                     break;
                 case IF:
-                    statement = parseIterationStatement();
+                    statement = parseSelectionStatement();
                     break;
                 case WHILE:
                     statement = parseIterationStatement();

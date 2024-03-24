@@ -14,8 +14,9 @@ public class CMinusParser implements Parser {
     static public Token currentToken;
     private static List<Token> tokens;
     private static int tokenIndex;
-
-    CMinusParser(String filename) {
+    private static Program prog;
+    
+    public CMinusParser(String filename) {
 
         tokens = new ArrayList<Token>();
 
@@ -122,8 +123,9 @@ public class CMinusParser implements Parser {
             System.err.println("Error reading the file: " + e.getMessage());
         }
 
-        currentToken = tokens.getFirst();
         tokenIndex = 0;
+        currentToken = tokens.get(tokenIndex);
+
     }
 
     public static Object matchToken(TokenType type) {
@@ -136,13 +138,18 @@ public class CMinusParser implements Parser {
 
     public static Token advanceToken() {
         Token token = currentToken;
-        currentToken = tokens.get(++tokenIndex);
+        if ((tokenIndex + 1) != tokens.size()) {
+        	++tokenIndex;
+        }else {
+        	System.out.println("Houston we have a problem");
+
+        }
+        currentToken = tokens.get(tokenIndex);
         return token;
     };
 
     public Program parse() {
-        Program ast = new Program();
-        return ast;
+    	return this.prog.parseProgram();
     };
 
     public void printTree() {};

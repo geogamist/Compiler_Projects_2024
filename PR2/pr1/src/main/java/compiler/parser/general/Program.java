@@ -25,7 +25,7 @@ public class Program {
         Declaration rhs = null;
 
         lhs = Declaration.parseDeclaration();
-        
+        program = new Program(lhs, rhs);
         while (CMinusParser.currentToken.getTokenType() == TokenType.VOID ||
                CMinusParser.currentToken.getTokenType() == TokenType.INT) {
             

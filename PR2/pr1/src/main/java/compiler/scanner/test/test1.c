@@ -1,11 +1,9 @@
 /* Basic addition program */
 
-int main() {
-    
-    /* Holds the number */
-    int num1 = 1;
-    int num2 = 2;
-    int num3 = num1 + num2;
+int tester;
+int buster[10];
 
-    return 0;
+int gdc (int u,int v) {
+    if (v == 0) return u;
+    else return gdc(v, u / v);
 }

@@ -65,7 +65,7 @@ public abstract class Declaration {
 
         return declaration;
     }
-
+    
     public static Declaration parseDeclarationPrime(Expression lhs) {
 
         Declaration declaration = null;
@@ -73,6 +73,7 @@ public abstract class Declaration {
         switch (CMinusParser.currentToken.getTokenType()) {
             case SEMI:
                 CMinusParser.matchToken(Token.TokenType.SEMI);
+                declaration = new DeclarationPrime(lhs);
                 break;
             case LBRACKET:
                 CMinusParser.matchToken(Token.TokenType.LBRACKET);
@@ -81,6 +82,7 @@ public abstract class Declaration {
                 Expression identifierExpression = new IdentifierExpression(((IdentifierExpression)lhs).getIdentifier(), numericExpression);
                 declaration = new DeclarationPrime(identifierExpression);
                 CMinusParser.matchToken(Token.TokenType.RBRACKET);
+                CMinusParser.matchToken(Token.TokenType.SEMI);
                 break;
             case LPAREN:
                 declaration = parseFunctionDeclaration();

@@ -40,6 +40,7 @@ public abstract class Expression {
         Expression returnExpression = null;
         Expression expression = null;
 
+        //TODO: EQ HERE 
         switch (CMinusParser.currentToken.getTokenType()) {
             case ASSIGN:
                 CMinusParser.matchToken(TokenType.ASSIGN);
@@ -61,6 +62,10 @@ public abstract class Expression {
                 returnExpression = parseSimpleExpressionPrime(callExpression);
                 break;
             case TIMES:
+            	break;
+            case EQ:
+                returnExpression = parseSimpleExpressionPrime(lhs);
+                break;
             case OVER:
                 returnExpression = parseSimpleExpressionPrime(lhs);
                 break;
