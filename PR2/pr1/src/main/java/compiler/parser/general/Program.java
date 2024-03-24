@@ -2,9 +2,6 @@ package compiler.parser.general;
 import compiler.parser.CMinusParser;
 import compiler.parser.declarations.Declaration;
 import compiler.scanner.Token.*;
-import java.util.*;
-
-import javax.lang.model.type.DeclaredType;
 
 public class Program {
 
@@ -15,21 +12,25 @@ public class Program {
         lhs = null;
         rhs = null;
     };
+
     public Program(Declaration lhs, Declaration rhs) {
         this.lhs = lhs;
         this.rhs = rhs;
     };
 
     public static Program parseProgram() {
-        Program program = new Program();
-        Declaration lhs = Declaration.parseDeclaration();
+
+        Program program = null;
+        Declaration lhs = null;
         Declaration rhs = null;
+
+        lhs = Declaration.parseDeclaration();
         
-        while (CMinusParser.currentToken.getTokenType() == TokenType.VOID || CMinusParser.currentToken.getTokenType() == TokenType.INT) {
+        while (CMinusParser.currentToken.getTokenType() == TokenType.VOID ||
+               CMinusParser.currentToken.getTokenType() == TokenType.INT) {
             
             rhs = Declaration.parseDeclaration();
             program = new Program(lhs, rhs);
-
         }
 
         return program;

@@ -1,14 +1,14 @@
 package compiler.parser.expressions;
 
-import compiler.scanner.Token;
-
 public class IdentifierExpression extends Expression {
 
     String identifier;
+    Expression capacity;
 
-    public IdentifierExpression(Token token) {
+    public IdentifierExpression(String identifier, Expression capacity) {
         super();
-        this.identifier = (String)token.getTokenData();
+        this.identifier = identifier;
+        this.capacity = capacity;
     }
 
     void print() {};

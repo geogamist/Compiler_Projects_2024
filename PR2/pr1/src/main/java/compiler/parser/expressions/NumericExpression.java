@@ -1,14 +1,12 @@
 package compiler.parser.expressions;
 
-import compiler.scanner.Token;
-
 public class NumericExpression extends Expression {
 
     int value;
 
-    public NumericExpression(Token token) {
+    public NumericExpression(String value) {
         super();
-        this.value = (int)token.getTokenData();
+        this.value = Integer.parseInt(value);
     }
 
     void print() {};
