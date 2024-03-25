@@ -56,12 +56,6 @@ public class CminusScanner implements Scanner {
         	put("return", TokenType.RETURN);
         	put("void", TokenType.VOID);
         	put("while", TokenType.WHILE);
-			put("then", TokenType.THEN);
-			put("end", TokenType.END);
-			put("repeat", TokenType.REPEAT);
-			put("until", TokenType.UNTIL);
-			put("read", TokenType.READ);
-			put("write", TokenType.WRITE);
         }};
 
 		// Populate the initial token

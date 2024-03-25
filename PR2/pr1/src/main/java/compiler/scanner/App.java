@@ -51,7 +51,7 @@ public class App {
                     line += (" " + String.valueOf(currToken.getTokenData()));
                 }
                 if (type != TokenType.NULL) {
-                    //System.out.println(line);
+                    System.out.println(line);
                     //write to file
                     myWriter.write(line + "\n");
                 }
@@ -62,7 +62,7 @@ public class App {
             Parser parseVar = new CMinusParser(WorkingDir + "output.txt");
             Program program = parseVar.parse();
 
-            myWriter = new FileWriter(WorkingDir + "output.ast");
+            myWriter = new FileWriter(WorkingDir + "output2.ast");
             program.print(myWriter);
             myWriter.close();
         }

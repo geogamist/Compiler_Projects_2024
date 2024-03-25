@@ -8,6 +8,20 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.*;
 
+/** 
+* This class implements the Params class.
+*
+* @author Abagail Clark, Josiah Harvey, Spencer Riffle
+* @version 1.0
+* File: Params.java
+* Created: March 2024
+* ©Copyright Cedarville University, its Computer Science faculty, and the 
+* authors. All rights reserved.
+*
+* Description: This class provides a class for params. Users of this class
+*  are provided methods to parse params, including individual params.
+*/
+
 public class Params {
 
     public List<Expression> params;
@@ -43,7 +57,7 @@ public class Params {
                 returnParams = new Params(type, params);
                 break;
             default:
-                throw new IllegalArgumentException("Unexpected value: " + CMinusParser.currentToken.getTokenType());
+                throw new IllegalArgumentException("Unexpected value parseParams: " + CMinusParser.currentToken.getTokenType());
         }
 
         return returnParams;
@@ -69,17 +83,17 @@ public class Params {
                 }
                 break;
             default:
-                throw new IllegalArgumentException("Unexpected value: " + CMinusParser.currentToken.getTokenType());
+                throw new IllegalArgumentException("Unexpected value parseParam: " + CMinusParser.currentToken.getTokenType());
         }
 
         return param;
     }
     
-    public void print(FileWriter file) throws IOException {
+    public void print(FileWriter file, int spacer) throws IOException {
         if (params != null) {
             for (int i = 0; i < params.size(); i++) {
                 //file.write(type + " ");
-                params.get(i).print(file);
+                params.get(i).print(file, 0);
                 if ((i + 1) < params.size()) {
                     file.write(", ");
                 }

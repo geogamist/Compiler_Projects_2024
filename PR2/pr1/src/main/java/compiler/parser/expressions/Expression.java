@@ -8,6 +8,22 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.*;
 
+/** 
+* This class implements the Expression abstract class.
+*
+* @author Abagail Clark, Josiah Harvey, Spencer Riffle
+* @version 1.0
+* File: Expression.java
+* Created: March 2024
+* ©Copyright Cedarville University, its Computer Science faculty, and the 
+* authors. All rights reserved.
+*
+* Description: This class provides an abstract class for expressions. Users
+* of this class are provided methods to parse expressions and related fields,
+* such as terms, factors, varcalls, and args. Users are also provided helper
+* functions to determine operation type.
+*/
+
 public abstract class Expression {
 
     public static Expression parseExpression() {
@@ -32,7 +48,7 @@ public abstract class Expression {
                 returnExpression = parseSimpleExpressionPrime(expression);
                 break;
             default:
-                throw new IllegalArgumentException("Unexpected value: " + CMinusParser.currentToken.getTokenType());
+                throw new IllegalArgumentException("Unexpected value parseExpression: " + CMinusParser.currentToken.getTokenType());
         }
 
         return returnExpression;
@@ -76,7 +92,7 @@ public abstract class Expression {
                     returnExpression = lhs;
                     break;
                 default:
-                    throw new IllegalArgumentException("Unexpected value: " + CMinusParser.currentToken.getTokenType());
+                    throw new IllegalArgumentException("Unexpected value parseExpressionPrime: " + CMinusParser.currentToken.getTokenType());
             }
         }
 
@@ -105,7 +121,7 @@ public abstract class Expression {
                     returnExpression = lhs;
                     break;
                 default:
-                    throw new IllegalArgumentException("Unexpected value: " + CMinusParser.currentToken.getTokenType());
+                    throw new IllegalArgumentException("Unexpected value parseExpressionPrimePrime: " + CMinusParser.currentToken.getTokenType());
             }
         }
 
@@ -134,7 +150,7 @@ public abstract class Expression {
                     returnExpression = lhs;
                     break;
                 default:
-                    throw new IllegalArgumentException("Unexpected value: " + CMinusParser.currentToken.getTokenType());
+                    throw new IllegalArgumentException("Unexpected value parseSimpleExpressionPrime: " + CMinusParser.currentToken.getTokenType());
             }
         }
 
@@ -157,7 +173,7 @@ public abstract class Expression {
                 }
                 break;
             default:
-                throw new IllegalArgumentException("Unexpected value: " + CMinusParser.currentToken.getTokenType());
+                throw new IllegalArgumentException("Unexpected value parseAdditiveExpression: " + CMinusParser.currentToken.getTokenType());
         }
 
         return returnExpression;
@@ -193,7 +209,7 @@ public abstract class Expression {
                 returnExpression = lhs;
                 break;
             default:
-                throw new IllegalArgumentException("Unexpected value: " + CMinusParser.currentToken.getTokenType());
+                throw new IllegalArgumentException("Unexpected value parseAdditiveExpressionPrime: " + CMinusParser.currentToken.getTokenType());
         }
 
         return returnExpression;
@@ -215,7 +231,7 @@ public abstract class Expression {
                 }
                 break;
             default:
-                throw new IllegalArgumentException("Unexpected value: " + CMinusParser.currentToken.getTokenType());
+                throw new IllegalArgumentException("Unexpected value parseTerm: " + CMinusParser.currentToken.getTokenType());
         }
 
         return returnExpression;
@@ -240,7 +256,7 @@ public abstract class Expression {
                 returnExpression = lhs;
                 break;
             default:
-                throw new IllegalArgumentException("Unexpected value: " + CMinusParser.currentToken.getTokenType());
+                throw new IllegalArgumentException("Unexpected value parseTermPrime: " + CMinusParser.currentToken.getTokenType());
         }
 
         return returnExpression;
@@ -266,7 +282,7 @@ public abstract class Expression {
                 CMinusParser.matchToken(TokenType.RPAREN);
                 break;
             default:
-                throw new IllegalArgumentException("Unexpected value: " + CMinusParser.currentToken.getTokenType());
+                throw new IllegalArgumentException("Unexpected value parseFactor: " + CMinusParser.currentToken.getTokenType());
         }
 
         return returnExpression;
@@ -307,7 +323,7 @@ public abstract class Expression {
                 returnExpression = lhs;
                 break;
             default:
-                throw new IllegalArgumentException("Unexpected value: " + CMinusParser.currentToken.getTokenType());
+                throw new IllegalArgumentException("Unexpected value parseVarcall: " + CMinusParser.currentToken.getTokenType());
         }
 
         return returnExpression;
@@ -332,7 +348,7 @@ public abstract class Expression {
             case RPAREN:
                 break;
             default:
-                throw new IllegalArgumentException("Unexpected value: " + CMinusParser.currentToken.getTokenType());
+                throw new IllegalArgumentException("Unexpected value parseArgs: " + CMinusParser.currentToken.getTokenType());
         }
 
         return args;
@@ -371,5 +387,5 @@ public abstract class Expression {
         return false;
     }
    
-    public abstract void print(FileWriter file) throws IOException;
+    public abstract void print(FileWriter file, int spacer) throws IOException;
 }

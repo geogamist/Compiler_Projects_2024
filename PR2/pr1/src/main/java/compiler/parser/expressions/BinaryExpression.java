@@ -5,6 +5,20 @@ import java.io.IOException;
 
 import compiler.scanner.Token;
 
+/** 
+* This class extends Expression, implementing the BinaryExpression class.
+*
+* @author Abagail Clark, Josiah Harvey, Spencer Riffle
+* @version 1.0
+* File: BinaryExpression.java
+* Created: March 2024
+* ©Copyright Cedarville University, its Computer Science faculty, and the 
+* authors. All rights reserved.
+*
+* Description: This class provides a class for binary expressions. Users
+* of this class are provided a method to print the class's contents.
+*/
+
 public class BinaryExpression extends Expression {
 
     Expression lhs;
@@ -50,9 +64,13 @@ public class BinaryExpression extends Expression {
         this.rhs = rhs;
     }
 
-    public void print(FileWriter file) throws IOException {
-        lhs.print(file);
-        file.write(operator);
-        rhs.print(file);
+    public void print(FileWriter file, int spacer) throws IOException {
+        lhs.print(file, spacer + 3);
+        // for (int i = 0; i < spacer; i++) {
+        //     file.write(" ");
+        // }
+        file.write(" " + operator + " ");
+        rhs.print(file, -3);
+        
     };
 }

@@ -3,6 +3,21 @@ package compiler.parser.expressions;
 import java.io.FileWriter;
 import java.io.IOException;
 
+/** 
+* This class extends Expression, implementing the IdentifierExpression class.
+*
+* @author Abagail Clark, Josiah Harvey, Spencer Riffle
+* @version 1.0
+* File: IdentifierExpression.java
+* Created: March 2024
+* ©Copyright Cedarville University, its Computer Science faculty, and the 
+* authors. All rights reserved.
+*
+* Description: This class provides a class for identifier expressions. Users
+* of this class are provided methods to print the class's contents and get
+* the class's member variables.
+*/
+
 public class IdentifierExpression extends Expression {
 
     public String identifier;
@@ -32,15 +47,23 @@ public class IdentifierExpression extends Expression {
         return capacity;
     }
 
-    public void print(FileWriter file) throws IOException { 
+    public void print(FileWriter file, int spacer) throws IOException { 
+        for (int i = 0; i < spacer; i++) {
+            file.write(" ");
+        }
         if (type != null) {
+
             file.write(type + " ");
         }
+        // for (int i = 0; i < spacer; i++) {
+        //     file.write(" ");
+        // }
         file.write(identifier);
         if (isArray) {
+
             file.write("[");
             if (capacity != null) {
-                capacity.print(file);
+                capacity.print(file, 0);
             }
             file.write("]");
         }

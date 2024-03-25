@@ -130,7 +130,7 @@ public class CMinusParser implements Parser {
 
     public static Object matchToken(TokenType type) {
         if (currentToken.getTokenType() != type) {
-            throw new IllegalArgumentException("Unexpected value: " + CMinusParser.currentToken.getTokenType());
+            throw new IllegalArgumentException("TOKEN MISMATCH matchToken: " + CMinusParser.currentToken.getTokenType());
         }
         Object data = advanceToken().getTokenData();
         return data;
@@ -140,8 +140,10 @@ public class CMinusParser implements Parser {
         Token token = currentToken;
         if ((tokenIndex + 1) != tokens.size()) {
         	++tokenIndex;
-        }else {
-        	System.out.println("Houston we have a problem");
+
+        }
+        else {
+        	System.out.println("EOF-REACHED");
 
         }
         currentToken = tokens.get(tokenIndex);

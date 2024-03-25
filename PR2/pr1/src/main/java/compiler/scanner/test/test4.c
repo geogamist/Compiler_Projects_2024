@@ -8,6 +8,6 @@ int fact( int x )
 
 void main( void )
 {   int x;
-    x = read();
+    x = input();
     if (x > 0) write( fact(x) );
 }

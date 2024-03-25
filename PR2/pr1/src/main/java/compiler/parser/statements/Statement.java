@@ -10,14 +10,30 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.*;
 
+/** 
+* This class implements the Statement abstract class.
+*
+* @author Abagail Clark, Josiah Harvey, Spencer Riffle
+* @version 1.0
+* File: Statement.java
+* Created: March 2024
+* ©Copyright Cedarville University, its Computer Science faculty, and the 
+* authors. All rights reserved.
+*
+* Description: This class provides an abstract class for parsing statements. 
+* It is meant to be called though the root Program class though its own 
+* realated parse methods.
+*/
+
 public abstract class Statement {
 
     public static Statement parseStatement() {
 
         Statement statement = null;
-        
         switch (CMinusParser.currentToken.getTokenType()) {
+            //NO BREAKS all lead to same case
             case ID:
+            //make case for func
             case NUM:
             case LPAREN:
             case SEMI:
@@ -36,7 +52,7 @@ public abstract class Statement {
                 statement = parseReturnStatement();
                 break;
             default:
-                throw new IllegalArgumentException("Unexpected value: " + CMinusParser.currentToken.getTokenType());
+                throw new IllegalArgumentException("Unexpected value parseStatement: " + CMinusParser.currentToken.getTokenType());
         }
 
         return statement;
@@ -45,15 +61,17 @@ public abstract class Statement {
     public static Statement parseCompoundStatement() {
 
         Statement returnStatement = null;
-
+        //parse compound statement
         switch (CMinusParser.currentToken.getTokenType()) {
             case LBRACE:
+                
+                //parse compound statement
                 CMinusParser.matchToken(TokenType.LBRACE);
                 List<Expression> localDeclarations = new ArrayList<Expression>();
                 List<Statement> statements = new ArrayList<Statement>();
                 Statement statement = null;
 
-                // Parse local declarations
+                // Parse local declarations may be non or many 
                 while (CMinusParser.currentToken.getTokenType() == TokenType.INT) {
         
                     Expression identifierExpression = null;
@@ -75,7 +93,7 @@ public abstract class Statement {
                     localDeclarations.add(identifierExpression);
                 }
         
-                // Parse statements
+                // Parse statements may be non or many 
                 while (CMinusParser.currentToken.getTokenType() == TokenType.ID ||
                     CMinusParser.currentToken.getTokenType() == TokenType.NUM ||
                     CMinusParser.currentToken.getTokenType() == TokenType.LPAREN ||
@@ -93,7 +111,7 @@ public abstract class Statement {
                 returnStatement = new CompoundStatement(localDeclarations, statements);
                 break;
             default:
-                throw new IllegalArgumentException("Unexpected value: " + CMinusParser.currentToken.getTokenType());
+                throw new IllegalArgumentException("Unexpected value parseCompoundStatement: " + CMinusParser.currentToken.getTokenType());
         }
 
         return returnStatement;
@@ -102,7 +120,7 @@ public abstract class Statement {
     public static Statement parseExpressionStatement() {
 
         Statement statement = null;
-
+        //parse expression statement
         switch (CMinusParser.currentToken.getTokenType()) {
             case ID:
             case NUM:
@@ -113,7 +131,7 @@ public abstract class Statement {
                 CMinusParser.matchToken(TokenType.SEMI);
                 break;
             default:
-                throw new IllegalArgumentException("Unexpected value: " + CMinusParser.currentToken.getTokenType());
+                throw new IllegalArgumentException("Unexpected value parseExpressionStatement: " + CMinusParser.currentToken.getTokenType());
         }
 
         return statement;
@@ -138,7 +156,7 @@ public abstract class Statement {
                 returnStatement = new SelectionStatement(expression, thenStatement, elseStatement);
                 break;
             default:
-                break;
+                throw new IllegalArgumentException("Unexpected value parseSelectionStatement: " + CMinusParser.currentToken.getTokenType());
         }
 
         return returnStatement;
@@ -158,7 +176,7 @@ public abstract class Statement {
                 returnStatement = new IterationStatement(expression, statement);
                 break;
             default:
-                throw new IllegalArgumentException("Unexpected value: " + CMinusParser.currentToken.getTokenType());
+                throw new IllegalArgumentException("Unexpected value parseIterationStatement: " + CMinusParser.currentToken.getTokenType());
         }
 
         return returnStatement;
@@ -179,11 +197,11 @@ public abstract class Statement {
                 returnStatement = new ReturnStatement(expression);
                 break;
             default:
-                throw new IllegalArgumentException("Unexpected value: " + CMinusParser.currentToken.getTokenType());
+                throw new IllegalArgumentException("Unexpected value parseReturnStatement: " + CMinusParser.currentToken.getTokenType());
         }
 
         return returnStatement;
     }
 
-    public abstract void print(FileWriter file) throws IOException;
+    public abstract void print(FileWriter file, int spacer) throws IOException;
 }

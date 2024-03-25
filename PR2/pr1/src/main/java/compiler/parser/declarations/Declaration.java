@@ -11,6 +11,20 @@ import compiler.scanner.Token.TokenType;
 import compiler.parser.general.Params;
 import compiler.parser.statements.Statement;
 
+/** 
+* This class implements the Declaration abstract class.
+*
+* @author Abagail Clark, Josiah Harvey, Spencer Riffle
+* @version 1.0
+* File: Declaration.java
+* Created: March 2024
+* ©Copyright Cedarville University, its Computer Science faculty, and the 
+* authors. All rights reserved.
+*
+* Description: This class provides an abstract class for declarations. Users
+* of this class are provided methods to parse declarations.
+*/
+
 public abstract class Declaration {
 
     public Expression identifierExpression;
@@ -44,7 +58,7 @@ public abstract class Declaration {
                 declaration.intialize(type, declaration.identifierExpression);
                 break;
             default:
-                throw new IllegalArgumentException("Unexpected value: " + CMinusParser.currentToken.getTokenType());
+                throw new IllegalArgumentException("Unexpected value parseDeclaration: " + CMinusParser.currentToken.getTokenType());
         }
 
         return declaration;
@@ -63,7 +77,7 @@ public abstract class Declaration {
                 declaration = new FunctionDeclaration(params, compoundStatement);
                 break;
             default:
-                throw new IllegalArgumentException("Unexpected value: " + CMinusParser.currentToken.getTokenType());
+                throw new IllegalArgumentException("Unexpected value parseFunctionDeclaration: " + CMinusParser.currentToken.getTokenType());
         }
 
         return declaration;
@@ -92,7 +106,7 @@ public abstract class Declaration {
                 declaration.identifierExpression = lhs;
                 break;
             default:
-                throw new IllegalArgumentException("Unexpected value: " + CMinusParser.currentToken.getTokenType());
+                throw new IllegalArgumentException("Unexpected value parseDeclarationPrime: " + CMinusParser.currentToken.getTokenType());
         }
 
         return declaration;
@@ -103,5 +117,5 @@ public abstract class Declaration {
         this.identifierExpression = identifierExpression;
     }
 
-    public abstract void print(FileWriter file) throws IOException;
+    public abstract void print(FileWriter file, int spacer) throws IOException;
 }
