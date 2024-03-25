@@ -25,7 +25,7 @@ import compiler.scanner.Token.TokenType;
 public class App {
     public static void main(String[] args) throws FileNotFoundException {
         // Go up one directory level to find the test file
-        String WorkingDir = System.getProperty("user.dir") + "\\PR2\\pr1\\src\\main\\java\\compiler\\scanner\\test\\";
+        String WorkingDir = System.getProperty("user.dir") + "\\pr1\\src\\main\\java\\compiler\\scanner\\test\\";
         System.out.println(WorkingDir);
         // Ask user for whitch test file to use
         System.out.println("Enter the name of the file you would like to test DIGIT INPUT:");
@@ -51,7 +51,7 @@ public class App {
                     line += (" " + String.valueOf(currToken.getTokenData()));
                 }
                 if (type != TokenType.NULL) {
-                    System.out.println(line);
+                    //System.out.println(line);
                     //write to file
                     myWriter.write(line + "\n");
                 }
@@ -62,7 +62,7 @@ public class App {
             Parser parseVar = new CMinusParser(WorkingDir + "output.txt");
             Program program = parseVar.parse();
 
-            myWriter = new FileWriter(WorkingDir + "ast.txt");
+            myWriter = new FileWriter(WorkingDir + "output.ast");
             program.print(myWriter);
             myWriter.close();
         }

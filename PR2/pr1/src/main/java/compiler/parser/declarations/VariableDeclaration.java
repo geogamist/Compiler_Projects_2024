@@ -14,7 +14,7 @@ public class VariableDeclaration extends Declaration {
     }
 
     public void print(FileWriter file) throws IOException {
-        file.write(type + " ");
+        //file.write(type + " ");
         identifierExpression.print(file);
     };
 }

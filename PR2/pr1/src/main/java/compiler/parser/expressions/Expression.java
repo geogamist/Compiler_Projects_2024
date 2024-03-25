@@ -17,7 +17,7 @@ public abstract class Expression {
         switch (CMinusParser.currentToken.getTokenType()) {
             case ID:
                 String identifier = (String)CMinusParser.matchToken(TokenType.ID);
-                Expression identifierExpression = new IdentifierExpression(identifier);
+                Expression identifierExpression = new IdentifierExpression(identifier, null);
                 returnExpression = parseExpressionPrime(identifierExpression);
                 break;
             case NUM:
@@ -58,7 +58,7 @@ public abstract class Expression {
                     CMinusParser.matchToken(TokenType.LBRACKET);
                     expression = parseExpression();
                     CMinusParser.matchToken(TokenType.RBRACKET);
-                    Expression identifierExpression = new IdentifierExpression(((IdentifierExpression)lhs).getIdentifier(), expression);
+                    Expression identifierExpression = new IdentifierExpression(((IdentifierExpression)lhs).getIdentifier(), expression, null);
                     returnExpression = parseExpressionPrimePrime(identifierExpression);
                     break;
                 case LPAREN:
@@ -253,7 +253,7 @@ public abstract class Expression {
         switch (CMinusParser.currentToken.getTokenType()) {
             case ID:
                 String identifier = (String)CMinusParser.matchToken(TokenType.ID);
-                Expression identifierExpression = new IdentifierExpression(identifier);
+                Expression identifierExpression = new IdentifierExpression(identifier, null);
                 returnExpression = parseVarcall(identifierExpression);
                 break;
             case NUM:
@@ -280,7 +280,7 @@ public abstract class Expression {
             case LBRACKET:
                 CMinusParser.matchToken(TokenType.LBRACKET);
                 Expression capacity = parseExpression();
-                returnExpression = new IdentifierExpression(((IdentifierExpression)lhs).getIdentifier(), capacity);
+                returnExpression = new IdentifierExpression(((IdentifierExpression)lhs).getIdentifier(), capacity, null);
                 CMinusParser.matchToken(TokenType.RBRACKET);
                 break;
             case LPAREN:

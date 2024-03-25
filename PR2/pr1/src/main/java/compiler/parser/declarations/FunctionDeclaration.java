@@ -18,7 +18,9 @@ public class FunctionDeclaration extends Declaration {
     }
 
     public void print(FileWriter file) throws IOException {
-        file.write(this.type + " ");
+        // if (this.type == "VOID") {
+        //     file.write(this.type + " ");
+        // }        
         identifierExpression.print(file);
         file.write(" (");
         params.print(file);

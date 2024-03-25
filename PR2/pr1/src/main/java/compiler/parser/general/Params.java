@@ -62,10 +62,10 @@ public class Params {
                     CMinusParser.matchToken(Token.TokenType.LBRACKET);
                     numericExpression = new NumericExpression("0");
                     CMinusParser.matchToken(Token.TokenType.RBRACKET);
-                    param = new IdentifierExpression(identifier, numericExpression);
+                    param = new IdentifierExpression(identifier, numericExpression, type);
                 }
                 else {
-                    param = new IdentifierExpression(identifier);
+                    param = new IdentifierExpression(identifier, type);
                 }
                 break;
             default:
@@ -78,7 +78,7 @@ public class Params {
     public void print(FileWriter file) throws IOException {
         if (params != null) {
             for (int i = 0; i < params.size(); i++) {
-                file.write(type + " ");
+                //file.write(type + " ");
                 params.get(i).print(file);
                 if ((i + 1) < params.size()) {
                     file.write(", ");

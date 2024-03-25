@@ -52,7 +52,6 @@ public abstract class Statement {
                 List<Expression> localDeclarations = new ArrayList<Expression>();
                 List<Statement> statements = new ArrayList<Statement>();
                 Statement statement = null;
-                String LocalDeclarationType = "INT";
 
                 // Parse local declarations
                 while (CMinusParser.currentToken.getTokenType() == TokenType.INT) {
@@ -71,7 +70,8 @@ public abstract class Statement {
                     }
                     CMinusParser.matchToken(TokenType.SEMI);
         
-                    identifierExpression = new IdentifierExpression(identifier, numericExpression);
+                    //identifierExpression = new IdentifierExpression(identifier, numericExpression, value);
+                    identifierExpression = new IdentifierExpression(identifier, value);
                     localDeclarations.add(identifierExpression);
                 }
         

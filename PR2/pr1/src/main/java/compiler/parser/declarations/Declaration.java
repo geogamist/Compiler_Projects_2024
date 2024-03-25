@@ -32,14 +32,14 @@ public abstract class Declaration {
             case VOID:
                 type = (String)CMinusParser.matchToken(TokenType.VOID);
                 identifier = (String)CMinusParser.matchToken(TokenType.ID);
-                identifierExpression = new IdentifierExpression(identifier);
+                identifierExpression = new IdentifierExpression(identifier, type);
                 declaration = parseFunctionDeclaration();
                 declaration.intialize(type, identifierExpression);
                 break;
             case INT:
                 type = (String)CMinusParser.matchToken(TokenType.INT);
                 identifier = (String)CMinusParser.matchToken(TokenType.ID);
-                identifierExpression = new IdentifierExpression(identifier);
+                identifierExpression = new IdentifierExpression(identifier, type);
                 declaration = parseDeclarationPrime(identifierExpression);
                 declaration.intialize(type, declaration.identifierExpression);
                 break;
@@ -82,7 +82,7 @@ public abstract class Declaration {
                 CMinusParser.matchToken(Token.TokenType.LBRACKET);
                 String number = (String)CMinusParser.matchToken(Token.TokenType.NUM);
                 NumericExpression numericExpression = new NumericExpression(number);
-                Expression identifierExpression = new IdentifierExpression(((IdentifierExpression)lhs).getIdentifier(), numericExpression);
+                Expression identifierExpression = new IdentifierExpression(((IdentifierExpression)lhs).getIdentifier(), numericExpression, ((IdentifierExpression)lhs).type);
                 declaration = new VariableDeclaration(identifierExpression);
                 CMinusParser.matchToken(Token.TokenType.RBRACKET);
                 CMinusParser.matchToken(Token.TokenType.SEMI);
