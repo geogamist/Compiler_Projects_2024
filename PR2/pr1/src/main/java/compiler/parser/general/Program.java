@@ -3,38 +3,49 @@ import compiler.parser.CMinusParser;
 import compiler.parser.declarations.Declaration;
 import compiler.scanner.Token.*;
 
+import java.io.FileWriter;
+import java.io.IOException;
+import java.util.*;
+
 public class Program {
 
-    Declaration lhs;
-    Declaration rhs;
+    List<Declaration> declarations;
 
     public Program() {
-        lhs = null;
-        rhs = null;
+        declarations = null;
     };
 
-    public Program(Declaration lhs, Declaration rhs) {
-        this.lhs = lhs;
-        this.rhs = rhs;
+    public Program(List<Declaration> declarations) {
+        this.declarations = declarations;
     };
 
     public static Program parseProgram() {
 
         Program program = null;
-        Declaration lhs = null;
-        Declaration rhs = null;
+        Declaration declaration = null;
+        List<Declaration> declarations = new ArrayList<>();
 
-        lhs = Declaration.parseDeclaration();
-        program = new Program(lhs, rhs);
         while (CMinusParser.currentToken.getTokenType() == TokenType.VOID ||
                CMinusParser.currentToken.getTokenType() == TokenType.INT) {
-            
-            rhs = Declaration.parseDeclaration();
-            program = new Program(lhs, rhs);
+            switch (CMinusParser.currentToken.getTokenType()) {
+                case VOID:
+                case INT:
+                    declaration = Declaration.parseDeclaration();
+                    declarations.add(declaration);
+                    break;
+                default:
+                    throw new IllegalArgumentException("Unexpected value: " + CMinusParser.currentToken.getTokenType());
+            }
         }
 
+        program = new Program(declarations);
         return program;
     }
 
-    public static void print() {};
+    public void print(FileWriter file) throws IOException {
+        for (int i = 0; i < declarations.size(); i++) {
+            declarations.get(i).print(file);
+            file.write("\n");
+        }
+    };
 }

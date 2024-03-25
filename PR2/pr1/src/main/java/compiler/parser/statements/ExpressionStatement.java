@@ -1,5 +1,8 @@
 package compiler.parser.statements;
 
+import java.io.FileWriter;
+import java.io.IOException;
+
 import compiler.parser.expressions.Expression;
 
 public class ExpressionStatement extends Statement {
@@ -14,5 +17,9 @@ public class ExpressionStatement extends Statement {
         this.expression = expression;
     }
     
-    void print() {};
+    public void print(FileWriter file) throws IOException {
+        if (expression != null) {
+            expression.print(file);
+        }
+    };
 }

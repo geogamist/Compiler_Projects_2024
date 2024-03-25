@@ -5,6 +5,9 @@ import compiler.scanner.Token.TokenType;
 import compiler.parser.expressions.Expression;
 import compiler.parser.expressions.IdentifierExpression;
 import compiler.parser.expressions.NumericExpression;
+
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.*;
 
 public abstract class Statement {
@@ -15,15 +18,12 @@ public abstract class Statement {
         
         switch (CMinusParser.currentToken.getTokenType()) {
             case ID:
-                statement = parseExpressionStatement();
-                break;
             case NUM:
-                statement = parseExpressionStatement();
-                break;
             case LPAREN:
+            case SEMI:
                 statement = parseExpressionStatement();
                 break;
-            case INT:
+            case LBRACE:
                 statement = parseCompoundStatement();
                 break;
             case IF:
@@ -45,69 +45,56 @@ public abstract class Statement {
     public static Statement parseCompoundStatement() {
 
         Statement returnStatement = null;
-        CMinusParser.matchToken(TokenType.LBRACE);
 
-        // Parse local declarations
-        List<Expression> localDeclarations = new ArrayList<Expression>();
-        String LocalDeclarationType = "INT";
-        while (CMinusParser.currentToken.getTokenType() == TokenType.INT) {
+        switch (CMinusParser.currentToken.getTokenType()) {
+            case LBRACE:
+                CMinusParser.matchToken(TokenType.LBRACE);
+                List<Expression> localDeclarations = new ArrayList<Expression>();
+                List<Statement> statements = new ArrayList<Statement>();
+                Statement statement = null;
+                String LocalDeclarationType = "INT";
 
-            Expression identifierExpression = null;
-            Expression numericExpression = null;
-
-            String value = (String)CMinusParser.matchToken(TokenType.INT);
-            String identifier = (String)CMinusParser.matchToken(TokenType.ID);
-            
-            if (CMinusParser.currentToken.getTokenType() == TokenType.LBRACKET) {
-                CMinusParser.matchToken(TokenType.LBRACKET);
-                String number = (String)CMinusParser.matchToken(TokenType.NUM);
-                numericExpression = new NumericExpression(number);
-                CMinusParser.matchToken(TokenType.RBRACKET);
-                CMinusParser.matchToken(TokenType.SEMI);
-            }
-            
-            identifierExpression = new IdentifierExpression(identifier, numericExpression);
-            localDeclarations.add(identifierExpression);
+                // Parse local declarations
+                while (CMinusParser.currentToken.getTokenType() == TokenType.INT) {
+        
+                    Expression identifierExpression = null;
+                    Expression numericExpression = null;
+        
+                    String value = (String)CMinusParser.matchToken(TokenType.INT);
+                    String identifier = (String)CMinusParser.matchToken(TokenType.ID);
+                    
+                    if (CMinusParser.currentToken.getTokenType() == TokenType.LBRACKET) {
+                        CMinusParser.matchToken(TokenType.LBRACKET);
+                        String number = (String)CMinusParser.matchToken(TokenType.NUM);
+                        numericExpression = new NumericExpression(number);
+                        CMinusParser.matchToken(TokenType.RBRACKET);
+                    }
+                    CMinusParser.matchToken(TokenType.SEMI);
+        
+                    identifierExpression = new IdentifierExpression(identifier, numericExpression);
+                    localDeclarations.add(identifierExpression);
+                }
+        
+                // Parse statements
+                while (CMinusParser.currentToken.getTokenType() == TokenType.ID ||
+                    CMinusParser.currentToken.getTokenType() == TokenType.NUM ||
+                    CMinusParser.currentToken.getTokenType() == TokenType.LPAREN ||
+                    CMinusParser.currentToken.getTokenType() == TokenType.SEMI ||
+                    CMinusParser.currentToken.getTokenType() == TokenType.LBRACE ||
+                    CMinusParser.currentToken.getTokenType() == TokenType.IF ||
+                    CMinusParser.currentToken.getTokenType() == TokenType.WHILE ||
+                    CMinusParser.currentToken.getTokenType() == TokenType.RETURN
+                ) {
+                    statement = parseStatement();
+                    statements.add(statement);
+                }
+        
+                CMinusParser.matchToken(TokenType.RBRACE);
+                returnStatement = new CompoundStatement(localDeclarations, statements);
+                break;
+            default:
+                throw new IllegalArgumentException("Unexpected value: " + CMinusParser.currentToken.getTokenType());
         }
-
-        // Parse statements
-        List<Statement> statements = new ArrayList<Statement>();
-        Statement statement = null;
-        while (CMinusParser.currentToken.getTokenType() == TokenType.ID ||
-               CMinusParser.currentToken.getTokenType() == TokenType.NUM ||
-               CMinusParser.currentToken.getTokenType() == TokenType.LPAREN ||
-               CMinusParser.currentToken.getTokenType() == TokenType.IF ||
-               CMinusParser.currentToken.getTokenType() == TokenType.WHILE ||
-               CMinusParser.currentToken.getTokenType() == TokenType.RETURN
-        ) {
-            switch (CMinusParser.currentToken.getTokenType()) {
-                case ID:
-                    statement = parseExpressionStatement();
-                    break;
-                case NUM:
-                    statement = parseExpressionStatement();
-                    break;
-                case LPAREN:
-                    statement = parseExpressionStatement();
-                    break;
-                case IF:
-                    statement = parseSelectionStatement();
-                    break;
-                case WHILE:
-                    statement = parseIterationStatement();
-                    break;
-                case RETURN:
-                    statement = parseReturnStatement();
-                    break;
-                default:
-                    throw new IllegalArgumentException("Unexpected value: " + CMinusParser.currentToken.getTokenType());
-            }
-
-            statements.add(statement);
-        }
-
-        CMinusParser.matchToken(TokenType.RBRACE);
-        returnStatement = new CompoundStatement(localDeclarations, statements);
 
         return returnStatement;
     }
@@ -198,5 +185,5 @@ public abstract class Statement {
         return returnStatement;
     }
 
-    abstract void print();
+    public abstract void print(FileWriter file) throws IOException;
 }

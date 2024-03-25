@@ -1,4 +1,7 @@
 package compiler.parser.declarations;
+import java.io.FileWriter;
+import java.io.IOException;
+
 import compiler.parser.CMinusParser;
 import compiler.parser.expressions.Expression;
 import compiler.parser.expressions.IdentifierExpression;
@@ -38,7 +41,7 @@ public abstract class Declaration {
                 identifier = (String)CMinusParser.matchToken(TokenType.ID);
                 identifierExpression = new IdentifierExpression(identifier);
                 declaration = parseDeclarationPrime(identifierExpression);
-                declaration.intialize(type, identifierExpression);
+                declaration.intialize(type, declaration.identifierExpression);
                 break;
             default:
                 throw new IllegalArgumentException("Unexpected value: " + CMinusParser.currentToken.getTokenType());
@@ -73,19 +76,20 @@ public abstract class Declaration {
         switch (CMinusParser.currentToken.getTokenType()) {
             case SEMI:
                 CMinusParser.matchToken(Token.TokenType.SEMI);
-                declaration = new DeclarationPrime(lhs);
+                declaration = new VariableDeclaration(lhs);
                 break;
             case LBRACKET:
                 CMinusParser.matchToken(Token.TokenType.LBRACKET);
                 String number = (String)CMinusParser.matchToken(Token.TokenType.NUM);
                 NumericExpression numericExpression = new NumericExpression(number);
                 Expression identifierExpression = new IdentifierExpression(((IdentifierExpression)lhs).getIdentifier(), numericExpression);
-                declaration = new DeclarationPrime(identifierExpression);
+                declaration = new VariableDeclaration(identifierExpression);
                 CMinusParser.matchToken(Token.TokenType.RBRACKET);
                 CMinusParser.matchToken(Token.TokenType.SEMI);
                 break;
             case LPAREN:
                 declaration = parseFunctionDeclaration();
+                declaration.identifierExpression = lhs;
                 break;
             default:
                 throw new IllegalArgumentException("Unexpected value: " + CMinusParser.currentToken.getTokenType());
@@ -99,5 +103,5 @@ public abstract class Declaration {
         this.identifierExpression = identifierExpression;
     }
 
-    abstract void print();
+    public abstract void print(FileWriter file) throws IOException;
 }

@@ -3,19 +3,17 @@ package compiler.parser.general;
 import compiler.parser.CMinusParser;
 import compiler.scanner.Token;
 import compiler.parser.expressions.*;
+
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.*;
 
 public class Params {
 
-    /**
-     * Params: 
-     * Expression identifierExpression,
-     * Expression numericExpression
-     */
-    public List<Object[]> params;
+    public List<Expression> params;
     public String type;
 
-    public Params(String type, List<Object[]> params) {
+    public Params(String type, List<Expression> params) {
         this.type = type;
         this.params = params;
     };
@@ -23,8 +21,8 @@ public class Params {
     public static Params parseParams() {
 
         String type = null;
-        List<Object[]> params = null;
-        Object[] param = null;
+        List<Expression> params = null;
+        Expression param = null;
         Params returnParams = null;
 
         switch (CMinusParser.currentToken.getTokenType()) {
@@ -51,27 +49,41 @@ public class Params {
         return returnParams;
     }
 
-    public static Object[] parseParam() {
+    public static Expression parseParam() {
 
         Expression numericExpression = null;
+        Expression param = null;
 
-        String type = (String)CMinusParser.matchToken(Token.TokenType.INT);
-        String identifier = (String)CMinusParser.matchToken(Token.TokenType.ID);
-        if (CMinusParser.currentToken.getTokenType() == Token.TokenType.LBRACKET) {
-            CMinusParser.matchToken(Token.TokenType.LBRACKET);
-            numericExpression = new NumericExpression(null);
-            CMinusParser.matchToken(Token.TokenType.RBRACKET);
+        switch (CMinusParser.currentToken.getTokenType()) {
+            case INT:
+                String type = (String)CMinusParser.matchToken(Token.TokenType.INT);
+                String identifier = (String)CMinusParser.matchToken(Token.TokenType.ID);
+                if (CMinusParser.currentToken.getTokenType() == Token.TokenType.LBRACKET) {
+                    CMinusParser.matchToken(Token.TokenType.LBRACKET);
+                    numericExpression = new NumericExpression("0");
+                    CMinusParser.matchToken(Token.TokenType.RBRACKET);
+                    param = new IdentifierExpression(identifier, numericExpression);
+                }
+                else {
+                    param = new IdentifierExpression(identifier);
+                }
+                break;
+            default:
+                throw new IllegalArgumentException("Unexpected value: " + CMinusParser.currentToken.getTokenType());
         }
-        Expression identifierExpression = new IdentifierExpression(identifier);
-        Object[] param = new Object[]{identifierExpression, numericExpression};
+
         return param;
     }
-
-    private String getParam(List<Object[]> params, int id) {
-        IdentifierExpression identifierExpression = (IdentifierExpression)params.get(id)[0];
-        NumericExpression numericExpression = (NumericExpression)params.get(id)[1];
-        return identifierExpression.getIdentifier() + numericExpression.getValue();
-    }
     
-    void print() {};
+    public void print(FileWriter file) throws IOException {
+        if (params != null) {
+            for (int i = 0; i < params.size(); i++) {
+                file.write(type + " ");
+                params.get(i).print(file);
+                if ((i + 1) < params.size()) {
+                    file.write(", ");
+                }
+            }
+        }
+    };
 }

@@ -1,5 +1,7 @@
 package compiler.parser.expressions;
 
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.*;
 
 public class CallExpression extends Expression {
@@ -12,5 +14,15 @@ public class CallExpression extends Expression {
         this.args = args;
     }
 
-    void print() {};
+    public void print(FileWriter file) throws IOException {
+        function.print(file);
+        file.write("(");
+        for (int i = 0; i < args.size(); i++) {
+            args.get(i).print(file);
+            if ((i + 1) < args.size()) {
+                file.write(", ");
+            }
+        }
+        file.write(")");
+    };
 }

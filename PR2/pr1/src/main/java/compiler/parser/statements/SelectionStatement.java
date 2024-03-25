@@ -1,5 +1,8 @@
 package compiler.parser.statements;
 
+import java.io.FileWriter;
+import java.io.IOException;
+
 import compiler.parser.expressions.Expression;
 
 public class SelectionStatement extends Statement {
@@ -14,5 +17,15 @@ public class SelectionStatement extends Statement {
         this.elseStatement = elseStatement;
     }
     
-    void print() {};
+    public void print(FileWriter file) throws IOException {
+        file.write("if (");
+        expression.print(file);
+        file.write(")\n");
+        thenStatement.print(file);
+        file.write("\n");
+        if (elseStatement != null) {
+            file.write("else ");
+            elseStatement.print(file);
+        }
+    };
 }

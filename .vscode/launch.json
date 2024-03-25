@@ -2,14 +2,21 @@
   "version": "0.2.0",
   "configurations": [
     {
+      "type": "java",
+      "name": "App",
+      "request": "launch",
+      "mainClass": "compiler.scanner.App",
+      "projectName": "pr1"
+    },
+    {
       "name": "C/C++ Runner: Debug Session",
       "type": "cppdbg",
       "request": "launch",
       "args": [],
       "stopAtEntry": false,
       "externalConsole": true,
-      "cwd": "c:/Users/sriff/Git/Compiler_Projects_2024/PR2/pr1/src/main/java",
-      "program": "c:/Users/sriff/Git/Compiler_Projects_2024/PR2/pr1/src/main/java/build/Debug/outDebug",
+      "cwd": "c:/Users/sriff/Git/Compiler_Projects_2024/PR2/pr1/src/main/java/compiler/scanner/test",
+      "program": "c:/Users/sriff/Git/Compiler_Projects_2024/PR2/pr1/src/main/java/compiler/scanner/test/build/Debug/outDebug",
       "MIMode": "gdb",
       "miDebuggerPath": "gdb",
       "setupCommands": [

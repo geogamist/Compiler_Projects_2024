@@ -1,5 +1,8 @@
 package compiler.parser.statements;
 
+import java.io.FileWriter;
+import java.io.IOException;
+
 import compiler.parser.expressions.Expression;
 
 public class IterationStatement extends Statement {
@@ -12,5 +15,10 @@ public class IterationStatement extends Statement {
         this.statement = statement;
     }
 
-    void print() {};
+    public void print(FileWriter file) throws IOException {
+        file.write("while (");
+        expression.print(file);
+        file.write(") ");
+        statement.print(file);
+    };
 }

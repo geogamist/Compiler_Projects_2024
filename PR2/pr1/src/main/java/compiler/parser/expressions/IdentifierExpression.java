@@ -1,5 +1,8 @@
 package compiler.parser.expressions;
 
+import java.io.FileWriter;
+import java.io.IOException;
+
 public class IdentifierExpression extends Expression {
 
     private String identifier;
@@ -8,7 +11,7 @@ public class IdentifierExpression extends Expression {
 
     public IdentifierExpression(String identifier) {
         this.identifier = identifier;
-        this.isArray = true;
+        this.isArray = false;
         this.capacity = new NumericExpression("0");
     }
 
@@ -26,9 +29,14 @@ public class IdentifierExpression extends Expression {
         return capacity;
     }
 
-    public boolean isArray() {
-        return isArray;
-    }
-
-    void print() {};
+    public void print(FileWriter file) throws IOException {
+        file.write(identifier);
+        if (isArray) {
+            file.write("[");
+            if (capacity != null) {
+                capacity.print(file);
+            }
+            file.write("]");
+        }
+    };
 }

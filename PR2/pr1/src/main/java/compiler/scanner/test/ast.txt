@@ -1,0 +1,8 @@
+INT tester
+INT buster[10]
+INT gdc (INT u, INT v)
+{
+if (v==0)
+return u
+else return gdc(v, u/v)
+}

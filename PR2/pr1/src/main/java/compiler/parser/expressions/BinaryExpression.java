@@ -1,5 +1,8 @@
 package compiler.parser.expressions;
 
+import java.io.FileWriter;
+import java.io.IOException;
+
 import compiler.scanner.Token;
 
 public class BinaryExpression extends Expression {
@@ -47,5 +50,9 @@ public class BinaryExpression extends Expression {
         this.rhs = rhs;
     }
 
-    void print() {};
+    public void print(FileWriter file) throws IOException {
+        lhs.print(file);
+        file.write(operator);
+        rhs.print(file);
+    };
 }

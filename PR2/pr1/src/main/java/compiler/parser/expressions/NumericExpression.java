@@ -1,5 +1,8 @@
 package compiler.parser.expressions;
 
+import java.io.FileWriter;
+import java.io.IOException;
+
 public class NumericExpression extends Expression {
 
     private int value;
@@ -12,5 +15,7 @@ public class NumericExpression extends Expression {
         return value;
     }
 
-    void print() {};
+    public void print(FileWriter file) throws IOException {
+        file.write(Integer.toString(value));
+    };
 }

@@ -5,6 +5,7 @@ import java.io.IOException;
 
 import compiler.parser.CMinusParser;
 import compiler.parser.Parser;
+import compiler.parser.general.Program;
 
 import compiler.scanner.Token.TokenType;
 /** 
@@ -24,7 +25,7 @@ import compiler.scanner.Token.TokenType;
 public class App {
     public static void main(String[] args) throws FileNotFoundException {
         // Go up one directory level to find the test file
-        String WorkingDir = System.getProperty("user.dir") + "\\src\\main\\java\\compiler\\scanner\\test\\";
+        String WorkingDir = System.getProperty("user.dir") + "\\PR2\\pr1\\src\\main\\java\\compiler\\scanner\\test\\";
         System.out.println(WorkingDir);
         // Ask user for whitch test file to use
         System.out.println("Enter the name of the file you would like to test DIGIT INPUT:");
@@ -34,8 +35,8 @@ public class App {
         input.close();
         String fileNamePath = WorkingDir +  "test" + filenumber + ".c";
         
-        // Initialize the scanner
-        Scanner scanner = new CminusScanner2(fileNamePath);
+        // Scan tokens and print to file
+        Scanner scanner = new CminusScanner(fileNamePath);
         try {
             FileWriter myWriter = new FileWriter(WorkingDir + "output.txt");
 
@@ -57,13 +58,13 @@ public class App {
             }
             myWriter.close();
             
-            System.out.println("Successfully wrote to the file. ONTO PARSE1");
+            // Parse tokens and print to file
             Parser parseVar = new CMinusParser(WorkingDir + "output.txt");
-            parseVar.parse();
-            
-            
-            System.out.println(parseVar.getClass());
+            Program program = parseVar.parse();
 
+            myWriter = new FileWriter(WorkingDir + "ast.txt");
+            program.print(myWriter);
+            myWriter.close();
         }
         catch (IOException e) {
             e.printStackTrace();

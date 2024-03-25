@@ -1,5 +1,8 @@
 package compiler.parser.expressions;
 
+import java.io.FileWriter;
+import java.io.IOException;
+
 public class AssignExpression extends Expression {
 
     Expression identifierExpression;
@@ -10,5 +13,9 @@ public class AssignExpression extends Expression {
         this.assignExpression = assignExpression;
     }
 
-    void print() {};
+    public void print(FileWriter file) throws IOException {
+        identifierExpression.print(file);
+        file.write(" = ");
+        assignExpression.print(file);
+    };
 }
